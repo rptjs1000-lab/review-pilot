@@ -1,180 +1,294 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '../../../components/layout/Header';
 import Button from '../../../components/common/Button';
-import Modal from '../../../components/common/Modal';
 
-// 스토어 관리 페이지 — 스토어 카드 목록 + 추가 모달
-interface Store {
-  id: string;
-  name: string;
-  platform: string;
-  platformLabel: string;
+// 지원 플랫폼 목록
+const platforms = [
+  {
+    id: 'naver',
+    name: '네이버 스마트스토어',
+    icon: '🟢',
+    urlPlaceholder: 'https://smartstore.naver.com/내스토어명',
+    status: 'available' as const,
+    description: 'Extension으로 리뷰 자동응답 지원',
+  },
+  {
+    id: 'coupang',
+    name: '쿠팡',
+    icon: '🟠',
+    urlPlaceholder: 'https://www.coupang.com/vp/products/...',
+    status: 'coming' as const,
+    description: '2026년 상반기 지원 예정',
+  },
+  {
+    id: '11st',
+    name: '11번가',
+    icon: '🔴',
+    urlPlaceholder: 'https://www.11st.co.kr/products/...',
+    status: 'coming' as const,
+    description: '2026년 상반기 지원 예정',
+  },
+  {
+    id: 'gmarket',
+    name: 'G마켓/옥션',
+    icon: '🟡',
+    urlPlaceholder: 'https://www.gmarket.co.kr/...',
+    status: 'coming' as const,
+    description: '2026년 하반기 지원 예정',
+  },
+  {
+    id: 'cafe24',
+    name: '카페24 (자사몰)',
+    icon: '🔵',
+    urlPlaceholder: 'https://내브랜드.cafe24.com',
+    status: 'coming' as const,
+    description: 'API 연동 준비 중',
+  },
+  {
+    id: 'imweb',
+    name: '아임웹 (자사몰)',
+    icon: '🟣',
+    urlPlaceholder: 'https://내브랜드.imweb.me',
+    status: 'coming' as const,
+    description: 'API 연동 준비 중',
+  },
+  {
+    id: 'custom',
+    name: '기타 자사몰',
+    icon: '⚪',
+    urlPlaceholder: 'https://내브랜드.com',
+    status: 'coming' as const,
+    description: '직접 URL 입력 — 향후 지원',
+  },
+];
+
+// 등록된 스토어 상태
+interface RegisteredStore {
+  platformId: string;
+  storeName: string;
   url: string;
-  reviewCount: number;
-  createdAt: string;
+  enabled: boolean;
 }
 
 export default function StoresPage() {
-  const [stores, setStores] = useState<Store[]>([]);
-  const [addModal, setAddModal] = useState(false);
-  const [newStore, setNewStore] = useState({ name: '', platform: 'naver', url: '' });
+  const [registeredStores, setRegisteredStores] = useState<RegisteredStore[]>([
+    // 기본값: 네이버 스토어 1개 등록된 상태
+    { platformId: 'naver', storeName: '프리미엄 전자샵', url: 'https://smartstore.naver.com/premium-electronics', enabled: true },
+  ]);
+  const [editingPlatform, setEditingPlatform] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({ storeName: '', url: '' });
+  const [saved, setSaved] = useState(false);
 
-  // API에서 스토어 목록 가져오기
-  useEffect(() => {
-    const fetchStores = async () => {
-      try {
-        const res = await fetch('/api/stores');
-        const data = await res.json();
-        if (data.success && data.data) setStores(data.data);
-      } catch {
-        setStores(defaultStores);
-      }
-    };
-    fetchStores();
-  }, []);
+  // 플랫폼이 등록되어 있는지 확인
+  const getRegistered = (platformId: string) =>
+    registeredStores.find((s) => s.platformId === platformId);
 
-  const defaultStores: Store[] = [
-    { id: '1', name: '프리미엄 전자샵', platform: 'naver', platformLabel: '네이버', url: 'https://smartstore.naver.com/premium-electronics', reviewCount: 523, createdAt: '2026.01.15' },
-    { id: '2', name: '쿠팡 전자스토어', platform: 'coupang', platformLabel: '쿠팡', url: 'https://www.coupang.com/vp/products/premium', reviewCount: 412, createdAt: '2026.02.01' },
-    { id: '3', name: '11번가 라이프샵', platform: '11st', platformLabel: '11번가', url: 'https://www.11st.co.kr/products/lifeshop', reviewCount: 312, createdAt: '2026.02.20' },
-  ];
-
-  const displayStores = stores.length > 0 ? stores : defaultStores;
-
-  // 플랫폼 뱃지 색상
-  const platformBadge: Record<string, { bg: string; text: string }> = {
-    naver: { bg: 'bg-green-100', text: 'text-green-700' },
-    coupang: { bg: 'bg-orange-100', text: 'text-orange-700' },
-    '11st': { bg: 'bg-red-100', text: 'text-red-700' },
-    other: { bg: 'bg-slate-100', text: 'text-txt-sub' },
+  // 플랫폼 등록/수정 시작
+  const handleStartEdit = (platformId: string) => {
+    const existing = getRegistered(platformId);
+    setEditForm({
+      storeName: existing?.storeName || '',
+      url: existing?.url || '',
+    });
+    setEditingPlatform(platformId);
   };
 
-  // 플랫폼 라벨
-  const platformLabels: Record<string, string> = {
-    naver: '네이버',
-    coupang: '쿠팡',
-    '11st': '11번가',
-    other: '기타',
+  // 저장
+  const handleSave = (platformId: string) => {
+    if (!editForm.storeName.trim()) return;
+
+    setRegisteredStores((prev) => {
+      const exists = prev.find((s) => s.platformId === platformId);
+      if (exists) {
+        return prev.map((s) =>
+          s.platformId === platformId
+            ? { ...s, storeName: editForm.storeName, url: editForm.url, enabled: true }
+            : s
+        );
+      }
+      return [...prev, { platformId, storeName: editForm.storeName, url: editForm.url, enabled: true }];
+    });
+    setEditingPlatform(null);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
   };
 
-  // 스토어 추가
-  const handleAdd = async () => {
-    try {
-      const res = await fetch('/api/stores', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newStore),
-      });
-      const data = await res.json();
-      if (data.success && data.data) {
-        setStores((prev) => [...prev, data.data]);
-      }
-    } catch {
-      // 로컬 추가
-      const store: Store = {
-        id: String(Date.now()),
-        name: newStore.name,
-        platform: newStore.platform,
-        platformLabel: platformLabels[newStore.platform] || '기타',
-        url: newStore.url,
-        reviewCount: 0,
-        createdAt: new Date().toISOString().slice(0, 10).replace(/-/g, '.'),
-      };
-      setStores((prev) => [...prev, store]);
-    }
-    setNewStore({ name: '', platform: 'naver', url: '' });
-    setAddModal(false);
+  // 등록 해제
+  const handleRemove = (platformId: string) => {
+    setRegisteredStores((prev) => prev.filter((s) => s.platformId !== platformId));
+    setEditingPlatform(null);
+  };
+
+  // 토글
+  const handleToggle = (platformId: string) => {
+    setRegisteredStores((prev) =>
+      prev.map((s) =>
+        s.platformId === platformId ? { ...s, enabled: !s.enabled } : s
+      )
+    );
   };
 
   return (
     <>
-      <Header title="스토어 관리" />
+      <Header title="내 스토어 관리" />
       <main className="flex-1 p-6 overflow-y-auto">
-        {/* 상단 액션 */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-sm text-txt-sub">
-            등록된 스토어 <span className="font-semibold text-txt font-grotesk">{displayStores.length}</span>개
-          </p>
-          <Button onClick={() => setAddModal(true)}>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M12 4v16m8-8H4" />
-            </svg>
-            스토어 추가
-          </Button>
-        </div>
-
-        {/* 스토어 카드 목록 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayStores.map((store) => {
-            const badge = platformBadge[store.platform] || platformBadge.other;
-            return (
-              <div key={store.id} className="bg-white rounded-xl border border-bdr shadow-sm p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-lg font-semibold text-txt">{store.name}</h3>
-                  <span className={`px-2 py-0.5 text-xs font-medium rounded ${badge.bg} ${badge.text}`}>
-                    {store.platformLabel}
-                  </span>
-                </div>
-                {store.url && (
-                  <p className="text-xs text-txt-sub truncate mb-3">{store.url}</p>
-                )}
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-txt-sub">리뷰 수</span>
-                  <span className="font-semibold text-txt font-grotesk">{store.reviewCount.toLocaleString()}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm mt-1">
-                  <span className="text-txt-sub">등록일</span>
-                  <span className="text-txt-sub font-grotesk">{store.createdAt}</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* 스토어 추가 모달 */}
-        <Modal isOpen={addModal} onClose={() => setAddModal(false)} title="스토어 추가">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-txt mb-1.5">스토어명</label>
-              <input
-                type="text"
-                value={newStore.name}
-                onChange={(e) => setNewStore({ ...newStore, name: e.target.value })}
-                className="w-full h-10 px-3 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                placeholder="스토어 이름을 입력하세요"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-txt mb-1.5">플랫폼</label>
-              <select
-                value={newStore.platform}
-                onChange={(e) => setNewStore({ ...newStore, platform: e.target.value })}
-                className="w-full h-10 px-3 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              >
-                <option value="naver">네이버</option>
-                <option value="coupang">쿠팡</option>
-                <option value="11st">11번가</option>
-                <option value="other">기타</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-txt mb-1.5">스토어 URL</label>
-              <input
-                type="url"
-                value={newStore.url}
-                onChange={(e) => setNewStore({ ...newStore, url: e.target.value })}
-                className="w-full h-10 px-3 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                placeholder="https://"
-              />
-            </div>
-            <div className="flex items-center gap-3 pt-2">
-              <Button onClick={handleAdd}>추가</Button>
-              <Button variant="secondary" onClick={() => setAddModal(false)}>취소</Button>
-            </div>
+        <div className="max-w-3xl">
+          {/* 안내 */}
+          <div className="mb-6">
+            <p className="text-sm text-txt-sub">
+              운영 중인 쇼핑몰을 등록하면 해당 플랫폼의 리뷰를 수집하고 자동응답을 관리할 수 있습니다.
+            </p>
           </div>
-        </Modal>
+
+          {/* 저장 완료 토스트 */}
+          {saved && (
+            <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-emerald-50 border border-success/20 rounded-lg text-sm text-success">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+              스토어 정보가 저장되었습니다.
+            </div>
+          )}
+
+          {/* 플랫폼 목록 */}
+          <div className="space-y-3">
+            {platforms.map((platform) => {
+              const registered = getRegistered(platform.id);
+              const isEditing = editingPlatform === platform.id;
+              const isAvailable = platform.status === 'available';
+
+              return (
+                <div
+                  key={platform.id}
+                  className={`bg-white rounded-xl border shadow-sm transition-all ${
+                    registered?.enabled
+                      ? 'border-primary/30'
+                      : 'border-bdr'
+                  }`}
+                >
+                  {/* 헤더 행 */}
+                  <div className="flex items-center gap-4 p-5">
+                    {/* 아이콘 */}
+                    <span className="text-2xl">{platform.icon}</span>
+
+                    {/* 플랫폼 정보 */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-semibold text-txt">{platform.name}</h3>
+                        {isAvailable ? (
+                          <span className="px-1.5 py-0.5 text-[10px] font-medium bg-emerald-50 text-success rounded">연동 가능</span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 text-[10px] font-medium bg-slate-100 text-txt-sub rounded">준비 중</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-txt-sub mt-0.5">{platform.description}</p>
+
+                      {/* 등록된 스토어 정보 표시 */}
+                      {registered && !isEditing && (
+                        <div className="mt-2 flex items-center gap-3 text-xs">
+                          <span className="text-txt font-medium">{registered.storeName}</span>
+                          {registered.url && (
+                            <span className="text-txt-sub truncate max-w-[200px]">{registered.url}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 우측 액션 */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {registered && !isEditing && (
+                        <>
+                          {/* 활성/비활성 토글 */}
+                          <button
+                            onClick={() => handleToggle(platform.id)}
+                            className={`relative w-10 h-5 rounded-full transition-colors ${
+                              registered.enabled ? 'bg-primary' : 'bg-slate-200'
+                            }`}
+                            aria-label={registered.enabled ? '비활성화' : '활성화'}
+                          >
+                            <span
+                              className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                                registered.enabled ? 'left-[22px]' : 'left-0.5'
+                              }`}
+                            />
+                          </button>
+                          {/* 수정 버튼 */}
+                          <button
+                            onClick={() => handleStartEdit(platform.id)}
+                            className="px-2.5 py-1.5 text-xs text-txt-sub hover:text-txt border border-bdr rounded-lg hover:bg-bg transition-colors"
+                          >
+                            수정
+                          </button>
+                        </>
+                      )}
+                      {!registered && !isEditing && (
+                        <Button
+                          variant={isAvailable ? 'primary' : 'secondary'}
+                          onClick={() => handleStartEdit(platform.id)}
+                        >
+                          {isAvailable ? '등록' : '사전 등록'}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 편집 폼 — 펼침 */}
+                  {isEditing && (
+                    <div className="px-5 pb-5 pt-0 border-t border-bdr/50">
+                      <div className="pt-4 space-y-3">
+                        <div>
+                          <label className="block text-xs font-medium text-txt mb-1">스토어명</label>
+                          <input
+                            type="text"
+                            value={editForm.storeName}
+                            onChange={(e) => setEditForm({ ...editForm, storeName: e.target.value })}
+                            className="w-full h-9 px-3 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            placeholder="내 스토어 이름"
+                            autoFocus
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-txt mb-1">스토어 URL</label>
+                          <input
+                            type="url"
+                            value={editForm.url}
+                            onChange={(e) => setEditForm({ ...editForm, url: e.target.value })}
+                            className="w-full h-9 px-3 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            placeholder={platform.urlPlaceholder}
+                          />
+                        </div>
+                        <div className="flex items-center gap-2 pt-1">
+                          <Button onClick={() => handleSave(platform.id)}>저장</Button>
+                          <Button variant="secondary" onClick={() => setEditingPlatform(null)}>취소</Button>
+                          {registered && (
+                            <button
+                              onClick={() => handleRemove(platform.id)}
+                              className="ml-auto text-xs text-danger hover:underline"
+                            >
+                              등록 해제
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* 하단 안내 */}
+          <div className="mt-6 flex items-start gap-2 px-4 py-3 bg-primary-light rounded-lg">
+            <svg className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-xs text-primary leading-relaxed">
+              현재 네이버 스마트스토어만 Extension을 통한 자동응답이 지원됩니다. 다른 플랫폼은 사전 등록해두시면 지원 시작 시 알려드립니다.
+            </p>
+          </div>
+        </div>
       </main>
     </>
   );
