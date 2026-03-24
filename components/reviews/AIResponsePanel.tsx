@@ -107,21 +107,29 @@ export default function AIResponsePanel({ reviewId, initialResponse = '' }: AIRe
           disabled={!response}
           className="flex-1 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
           </svg>
-          클립보드 복사
+          응답 복사
         </button>
         <button
           onClick={handleRegenerate}
           disabled={isGenerating}
           className="px-4 py-2.5 bg-white border border-bdr hover:bg-bg text-txt text-sm font-medium rounded-lg transition-colors flex items-center gap-2 disabled:opacity-60"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
           재생성
         </button>
+      </div>
+
+      {/* Extension 안내 */}
+      <div className="flex items-center gap-2 px-3 py-2 bg-primary-light rounded-lg">
+        <svg className="w-4 h-4 text-primary flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p className="text-xs text-primary">Chrome Extension을 설치하면 스마트스토어에서 자동 입력됩니다.</p>
       </div>
     </div>
   );
