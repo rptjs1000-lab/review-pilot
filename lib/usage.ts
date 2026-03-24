@@ -99,8 +99,8 @@ export function incrementUsage(): void {
 
 /** 체험 기간 활성 여부 (MVP: 항상 true, false로 변경하면 블러 동작 확인 가능) */
 export function isTrialActive(): boolean {
-  // MVP에서는 항상 true — false로 바꾸면 페이월 블러 테스트 가능
-  return true;
+  // false로 설정하여 페이월 블러 테스트 활성화
+  return false;
 }
 
 /** 이번 달 AI 응답 사용량 (무료 플랜 기준 30건 제한) */
