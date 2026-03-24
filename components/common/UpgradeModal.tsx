@@ -16,8 +16,7 @@ const plans = [
     period: '',
     features: ['월 30건 자동응답', '기본 통계'],
     recommended: false,
-    buttonLabel: '현재 플랜',
-    disabled: true,
+    buttonLabel: '무료로 시작',
   },
   {
     name: '스타터',
@@ -26,7 +25,6 @@ const plans = [
     features: ['무제한 자동응답', '기본 인사이트'],
     recommended: false,
     buttonLabel: '시작하기',
-    disabled: false,
   },
   {
     name: '프로',
@@ -35,7 +33,6 @@ const plans = [
     features: ['무제한 자동응답', '풀 인사이트', '멀티 플랫폼', '경쟁 분석'],
     recommended: true,
     buttonLabel: '시작하기',
-    disabled: false,
   },
 ];
 
@@ -133,32 +130,16 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
             return (
               <div
                 key={plan.name}
-                onClick={() => !plan.disabled && handleSelect(plan.name)}
+                onClick={() => handleSelect(plan.name)}
                 className={`relative rounded-xl p-6 flex flex-col transition-all cursor-pointer ${
                   isSelected
-                    ? 'border-2 border-primary bg-primary-light ring-2 ring-primary/30 scale-[1.02]'
-                    : plan.recommended
-                      ? 'border-2 border-primary bg-primary-light hover:ring-2 hover:ring-primary/20'
-                      : plan.disabled
-                        ? 'border border-bdr bg-white cursor-default'
-                        : 'border border-bdr bg-white hover:border-primary/40 hover:shadow-md'
+                    ? 'border-2 border-primary bg-primary-light ring-2 ring-primary/20 scale-[1.02]'
+                    : 'border border-bdr bg-white hover:border-txt-sub/40 hover:shadow-sm'
                 }`}
               >
-                {/* 추천 뱃지 */}
-                {plan.recommended && !isSelected && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-xs font-medium px-3 py-1 rounded-full">
-                    추천
-                  </span>
-                )}
-
-                {/* 선택됨 뱃지 */}
-                {isSelected && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-success text-white text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    선택됨
-                  </span>
+                {/* 프로 플랜 추천 표시 — 텍스트만, 강조 없이 */}
+                {plan.recommended && (
+                  <span className="text-xs text-primary font-medium mb-1">추천</span>
                 )}
 
                 {/* 플랜 이름 */}
@@ -187,16 +168,12 @@ export default function UpgradeModal({ isOpen, onClose }: UpgradeModalProps) {
                 {/* 선택 표시 */}
                 <div
                   className={`w-full py-2.5 text-sm font-medium rounded-lg text-center transition-colors ${
-                    plan.disabled
-                      ? 'bg-bg text-txt-sub'
-                      : isSelected
-                        ? 'bg-success text-white'
-                        : plan.recommended
-                          ? 'bg-primary hover:bg-primary-dark text-white'
-                          : 'bg-white border border-bdr hover:bg-bg text-txt'
+                    isSelected
+                      ? 'bg-primary text-white'
+                      : 'bg-white border border-bdr text-txt hover:bg-bg'
                   }`}
                 >
-                  {plan.disabled ? '현재 플랜' : isSelected ? '✓ 선택됨' : plan.buttonLabel}
+                  {isSelected ? '✓ 선택됨' : plan.buttonLabel}
                 </div>
               </div>
             );
