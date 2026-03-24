@@ -8,6 +8,7 @@ import Button from '../../../components/common/Button';
 export default function SettingsPage() {
   const [defaultTone, setDefaultTone] = useState('friendly');
   const [defaultSignature, setDefaultSignature] = useState('감사합니다! - 스토어팀 드림');
+  const [autoLevel, setAutoLevel] = useState('smart'); // manual | smart | full
   const [extensionToken, setExtensionToken] = useState('');
   const [tokenCopied, setTokenCopied] = useState(false);
   const [trialDaysLeft, setTrialDaysLeft] = useState(5);
@@ -130,6 +131,84 @@ export default function SettingsPage() {
                 className="w-full h-10 px-3 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 placeholder="응답 끝에 자동 삽입될 서명 문구"
               />
+            </div>
+          </div>
+
+          {/* 자동화 레벨 설정 */}
+          <div className="bg-white rounded-xl border border-bdr shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-txt mb-2">자동화 레벨</h3>
+            <p className="text-sm text-txt-sub mb-4">
+              Extension이 스마트스토어에서 리뷰에 응답하는 방식을 설정합니다.
+            </p>
+            <div className="space-y-3">
+              {/* 수동 모드 */}
+              <label
+                className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors ${autoLevel === 'manual' ? 'border-primary bg-primary-light' : 'border-bdr hover:bg-bg'}`}
+              >
+                <input
+                  type="radio"
+                  name="autoLevel"
+                  value="manual"
+                  checked={autoLevel === 'manual'}
+                  onChange={(e) => setAutoLevel(e.target.value)}
+                  className="mt-0.5 accent-primary"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-txt">수동 모드</p>
+                  <p className="text-xs text-txt-sub mt-0.5">모든 리뷰를 직접 확인 후 하나씩 등록합니다. AI가 응답을 생성하지만, 등록은 항상 직접 클릭해야 합니다.</p>
+                </div>
+              </label>
+
+              {/* 스마트 자동 */}
+              <label
+                className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors ${autoLevel === 'smart' ? 'border-primary bg-primary-light' : 'border-bdr hover:bg-bg'}`}
+              >
+                <input
+                  type="radio"
+                  name="autoLevel"
+                  value="smart"
+                  checked={autoLevel === 'smart'}
+                  onChange={(e) => setAutoLevel(e.target.value)}
+                  className="mt-0.5 accent-primary"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-txt flex items-center gap-2">
+                    스마트 자동
+                    <span className="px-1.5 py-0.5 text-[10px] font-medium bg-primary text-white rounded">추천</span>
+                  </p>
+                  <p className="text-xs text-txt-sub mt-0.5">긍정 리뷰(4~5점)는 자동 생성 + 자동 등록합니다. 부정 리뷰(1~2점)와 반품/환불 관련 리뷰는 자동 생성 후 사용자 확인을 기다립니다.</p>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-emerald-50 text-success">4~5점 → 자동 등록</span>
+                    <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-amber-50 text-warning">3점 → 자동 등록</span>
+                    <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-danger">1~2점 → 확인 후 등록</span>
+                    <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-danger">반품/환불 → 확인 후 등록</span>
+                  </div>
+                </div>
+              </label>
+
+              {/* 완전 자동 */}
+              <label
+                className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-colors ${autoLevel === 'full' ? 'border-primary bg-primary-light' : 'border-bdr hover:bg-bg'}`}
+              >
+                <input
+                  type="radio"
+                  name="autoLevel"
+                  value="full"
+                  checked={autoLevel === 'full'}
+                  onChange={(e) => setAutoLevel(e.target.value)}
+                  className="mt-0.5 accent-primary"
+                />
+                <div>
+                  <p className="text-sm font-semibold text-txt">완전 자동</p>
+                  <p className="text-xs text-txt-sub mt-0.5">모든 리뷰에 자동 생성 + 자동 등록합니다. 부정 리뷰는 등록 후 알림으로 안내합니다.</p>
+                  <div className="flex items-center gap-1.5 mt-2 px-2 py-1 bg-amber-50 rounded text-[10px] text-warning font-medium">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                    부정 리뷰도 자동 등록되므로 주의가 필요합니다
+                  </div>
+                </div>
+              </label>
             </div>
           </div>
 
