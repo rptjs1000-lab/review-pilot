@@ -4,7 +4,11 @@
   "version": "1.0.0",
   "description": "AI가 리뷰에 맞춤 응답을 생성하고, 리뷰가 알려주는 매출 기회를 찾아줍니다.",
   "permissions": ["storage", "activeTab"],
-  "host_permissions": ["https://sell.smartstore.naver.com/*"],
+  "host_permissions": [
+    "https://sell.smartstore.naver.com/*",
+    "https://*.vercel.app/*",
+    "http://localhost:3000/*"
+  ],
   "background": {
     "service_worker": "service-worker.js"
   },
