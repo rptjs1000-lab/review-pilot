@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 전역 폰트 설정 */
+* {
+  font-family: 'Pretendard', sans-serif;
+}
+
+.font-grotesk {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* 섹션 구분선 (디자인 프리뷰 참조) */
+.section-divider {
+  border-top: 3px dashed #E2E8F0;
+  margin: 60px 0;
+  position: relative;
+}
+
+.section-divider::after {
+  content: attr(data-label);
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #F8FAFC;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2563EB;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}

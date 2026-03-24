@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "ReviewPilot - 스마트스토어 리뷰 자동응답",
+  "version": "1.0.0",
+  "description": "AI가 리뷰에 맞춤 응답을 생성하고, 리뷰가 알려주는 매출 기회를 찾아줍니다.",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["https://sell.smartstore.naver.com/*"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "content_scripts": [{
+    "matches": ["https://sell.smartstore.naver.com/*"],
+    "js": ["content/content.js"],
+    "css": ["content/styles.css"],
+    "run_at": "document_idle"
+  }],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.svg",
+      "48": "icons/icon48.svg",
+      "128": "icons/icon128.svg"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.svg",
+    "48": "icons/icon48.svg",
+    "128": "icons/icon128.svg"
+  }
+}

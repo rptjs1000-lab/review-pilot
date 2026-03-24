@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=360">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+  <title>ReviewPilot</title>
+</head>
+<body>
+  <!-- ─── 헤더 ─────────────────────────────────── -->
+  <header class="reviewpilot-popup-header">
+    <div class="reviewpilot-popup-logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span>ReviewPilot</span>
+    </div>
+    <span class="reviewpilot-popup-version">v1.0</span>
+  </header>
+
+  <!-- ─── 메인 콘텐츠 ─────────────────────────── -->
+  <main class="reviewpilot-popup-main">
+
+    <!-- 연결 상태 -->
+    <div class="reviewpilot-popup-status" id="connectionStatus">
+      <span class="reviewpilot-status-dot reviewpilot-status-loading"></span>
+      <span class="reviewpilot-status-text" id="statusText">연결 확인 중...</span>
+    </div>
+
+    <!-- ─── 미연결 상태: 설정 폼 ─────────────── -->
+    <div class="reviewpilot-popup-section reviewpilot-setup-form" id="setupForm" style="display: none;">
+      <div class="reviewpilot-form-group">
+        <label class="reviewpilot-label" for="apiUrlInput">서버 URL</label>
+        <input type="url" id="apiUrlInput" class="reviewpilot-input" placeholder="https://your-app.vercel.app">
+      </div>
+      <div class="reviewpilot-form-group">
+        <label class="reviewpilot-label" for="tokenInput">연결 토큰</label>
+        <input type="text" id="tokenInput" class="reviewpilot-input" placeholder="토큰을 입력하세요">
+      </div>
+      <button id="connectBtn" class="reviewpilot-btn-full">연결</button>
+    </div>
+
+    <!-- ─── 연결됨 + 비스마트스토어 ──────────── -->
+    <div class="reviewpilot-popup-section" id="notSmartstore" style="display: none;">
+      <div class="reviewpilot-message-box">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        <p>스마트스토어 관리자 페이지에서<br>사용해주세요.</p>
+        <a href="https://sell.smartstore.naver.com" target="_blank" class="reviewpilot-link-sm">
+          스마트스토어 바로가기 &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- ─── 연결됨 + 스마트스토어: 풀 기능 ──── -->
+    <div class="reviewpilot-popup-section" id="fullFeatures" style="display: none;">
+
+      <!-- 리뷰 요약 -->
+      <div class="reviewpilot-stats-row">
+        <div class="reviewpilot-stat-card">
+          <span class="reviewpilot-stat-label">미응답</span>
+          <span class="reviewpilot-stat-value reviewpilot-stat-pending" id="pendingCount">-</span>
+        </div>
+        <div class="reviewpilot-stat-card">
+          <span class="reviewpilot-stat-label">응답완료</span>
+          <span class="reviewpilot-stat-value reviewpilot-stat-done" id="respondedCount">-</span>
+        </div>
+      </div>
+
+      <div class="reviewpilot-divider"></div>
+
+      <!-- 톤 선택 -->
+      <div class="reviewpilot-form-group">
+        <label class="reviewpilot-label" for="toneSelect">응답 톤</label>
+        <select id="toneSelect" class="reviewpilot-select-full">
+          <option value="friendly">친절</option>
+          <option value="formal">격식</option>
+          <option value="casual">캐주얼</option>
+          <option value="professional">전문</option>
+        </select>
+      </div>
+
+      <!-- 일괄 응답 생성 -->
+      <button id="bulkGenerateBtn" class="reviewpilot-btn-full">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+        일괄 응답 생성
+      </button>
+    </div>
+
+    <div class="reviewpilot-divider"></div>
+
+    <!-- 대시보드 링크 -->
+    <div class="reviewpilot-popup-section">
+      <a href="#" id="dashboardLink" class="reviewpilot-dashboard-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        대시보드 열기
+      </a>
+    </div>
+  </main>
+
+  <!-- ─── 푸터 ─────────────────────────────────── -->
+  <footer class="reviewpilot-popup-footer">
+    <button id="tokenSettingsBtn" class="reviewpilot-footer-link">토큰 설정</button>
+    <span class="reviewpilot-footer-sep">|</span>
+    <a href="#" id="helpLink" class="reviewpilot-footer-link">도움말</a>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

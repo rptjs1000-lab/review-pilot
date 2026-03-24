@@ -1,0 +1,340 @@
+/**
+ * ReviewPilot Popup 스타일
+ * 웹앱과 동일한 디자인 시스템 (블루 테마, Pretendard)
+ */
+
+/* ─── 리셋 & 기본 ───────────────────────────────────────────── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 360px;
+  max-height: 500px;
+  overflow-y: auto;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #1E293B;
+  background: #FFFFFF;
+}
+
+/* ─── 헤더 ──────────────────────────────────────────────────── */
+.reviewpilot-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #2563EB;
+  color: #FFFFFF;
+}
+
+.reviewpilot-popup-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.reviewpilot-popup-version {
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+}
+
+/* ─── 메인 ──────────────────────────────────────────────────── */
+.reviewpilot-popup-main {
+  padding: 4px 0;
+}
+
+.reviewpilot-popup-section {
+  padding: 12px 18px;
+}
+
+/* ─── 연결 상태 ─────────────────────────────────────────────── */
+.reviewpilot-popup-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+}
+
+.reviewpilot-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.reviewpilot-status-connected {
+  background-color: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.reviewpilot-status-disconnected {
+  background-color: #EF4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.reviewpilot-status-loading {
+  background-color: #F59E0B;
+  animation: reviewpilot-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes reviewpilot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.reviewpilot-status-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748B;
+}
+
+/* ─── 구분선 ────────────────────────────────────────────────── */
+.reviewpilot-divider {
+  height: 1px;
+  margin: 0 18px;
+  background: #E2E8F0;
+}
+
+/* ─── 설정 폼 (미연결 시) ───────────────────────────────────── */
+.reviewpilot-setup-form {
+  padding: 16px 18px;
+}
+
+.reviewpilot-form-group {
+  margin-bottom: 12px;
+}
+
+.reviewpilot-form-group:last-of-type {
+  margin-bottom: 14px;
+}
+
+.reviewpilot-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1E293B;
+}
+
+.reviewpilot-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 13px;
+  color: #1E293B;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.reviewpilot-input:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.reviewpilot-input::placeholder {
+  color: #94A3B8;
+}
+
+/* ─── 버튼 (풀 너비) ───────────────────────────────────────── */
+.reviewpilot-btn-full {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 42px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background: #2563EB;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.reviewpilot-btn-full:hover {
+  background: #1D4ED8;
+}
+
+.reviewpilot-btn-full:active {
+  background: #1E40AF;
+}
+
+.reviewpilot-btn-full:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── 스탯 카드 행 ──────────────────────────────────────────── */
+.reviewpilot-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0;
+  margin-bottom: 4px;
+}
+
+.reviewpilot-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 12px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+}
+
+.reviewpilot-stat-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748B;
+  margin-bottom: 4px;
+}
+
+.reviewpilot-stat-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.reviewpilot-stat-pending {
+  color: #EF4444;
+}
+
+.reviewpilot-stat-done {
+  color: #10B981;
+}
+
+/* ─── 셀렉트 (톤 선택) ─────────────────────────────────────── */
+.reviewpilot-select-full {
+  width: 100%;
+  height: 38px;
+  padding: 0 36px 0 12px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1E293B;
+  background: #FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.reviewpilot-select-full:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* ─── 대시보드 링크 ─────────────────────────────────────────── */
+.reviewpilot-dashboard-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #2563EB;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.reviewpilot-dashboard-link:hover {
+  color: #1D4ED8;
+  text-decoration: underline;
+}
+
+/* ─── 메시지 박스 (비스마트스토어 안내) ──────────────────────── */
+.reviewpilot-message-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.reviewpilot-message-box p {
+  font-size: 13px;
+  color: #64748B;
+  line-height: 1.6;
+}
+
+.reviewpilot-link-sm {
+  font-size: 12px;
+  font-weight: 500;
+  color: #2563EB;
+  text-decoration: none;
+}
+
+.reviewpilot-link-sm:hover {
+  text-decoration: underline;
+}
+
+/* ─── 푸터 ──────────────────────────────────────────────────── */
+.reviewpilot-popup-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px 14px;
+  border-top: 1px solid #E2E8F0;
+}
+
+.reviewpilot-footer-link {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748B;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.reviewpilot-footer-link:hover {
+  color: #2563EB;
+}
+
+.reviewpilot-footer-sep {
+  font-size: 12px;
+  color: #CBD5E1;
+}
+
+/* ─── 스크롤바 ──────────────────────────────────────────────── */
+body::-webkit-scrollbar {
+  width: 5px;
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 10px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReviewPilot — 디자인 프리뷰</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Pretendard', 'sans-serif'],
+            grotesk: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            primary: { DEFAULT: '#2563EB', light: '#DBEAFE', dark: '#1D4ED8' },
+            sidebar: { DEFAULT: '#0F172A', hover: '#1E293B' },
+            surface: '#FFFFFF',
+            bg: '#F8FAFC',
+            txt: { DEFAULT: '#1E293B', sub: '#64748B' },
+            success: '#10B981',
+            warning: '#F59E0B',
+            danger: '#EF4444',
+            bdr: '#E2E8F0',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'Pretendard', sans-serif; }
+    .font-grotesk { font-family: 'Space Grotesk', sans-serif; }
+    .section-divider {
+      border-top: 3px dashed #E2E8F0;
+      margin: 60px 0;
+      position: relative;
+    }
+    .section-divider::after {
+      content: attr(data-label);
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #F8FAFC;
+      padding: 0 20px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #2563EB;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body class="bg-bg text-txt">
+
+  <!-- ============================================================ -->
+  <!-- 섹션 타이틀 -->
+  <!-- ============================================================ -->
+  <div class="bg-primary text-white text-center py-3 text-sm font-medium tracking-wide">
+    REVIEWPILOT DESIGN PREVIEW — 4개 섹션 미리보기
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 섹션 1: 랜딩 페이지 -->
+  <!-- ============================================================ -->
+  <div class="section-divider" data-label="섹션 1 — 랜딩 페이지"></div>
+
+  <!-- 랜딩 네비게이션 -->
+  <nav class="bg-white border-b border-bdr">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+        </div>
+        <span class="text-lg font-bold text-txt">ReviewPilot</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="#" class="text-sm text-txt-sub hover:text-txt">기능</a>
+        <a href="#" class="text-sm text-txt-sub hover:text-txt">요금제</a>
+        <a href="#" class="text-sm text-txt-sub hover:text-txt">고객사례</a>
+        <a href="#" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors">무료로 시작하기</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 히어로 섹션 -->
+  <section class="relative min-h-[600px] flex items-center justify-center overflow-hidden" style="background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1920&q=90'); background-size: cover; background-position: center;">
+    <!-- 다크 오버레이 -->
+    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(15,23,42,0.6) 0%, rgba(15,23,42,0.8) 100%);"></div>
+    <div class="relative text-center px-6 max-w-3xl">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 rounded-full text-white/90 text-sm font-medium mb-6 backdrop-blur-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        AI 기반 리뷰 자동응답
+      </div>
+      <h1 class="text-5xl font-bold text-white leading-[1.4] mb-6">
+        쇼핑몰 리뷰,<br>AI가 자동으로 응답합니다
+      </h1>
+      <p class="text-xl text-white/80 leading-[1.6] mb-10">
+        수백 개의 리뷰에 일일이 답변하느라 지치셨나요?<br>
+        ReviewPilot가 브랜드 톤에 맞는 응답을 자동 생성해 드립니다.
+      </p>
+      <div class="flex items-center justify-center gap-4">
+        <a href="#" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg rounded-xl transition-colors shadow-lg">무료로 시작하기</a>
+        <a href="#" class="px-8 py-4 border-2 border-white/40 text-white font-medium text-lg rounded-xl hover:bg-white/10 transition-colors">데모 보기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 핵심 기능 카드 -->
+  <section class="max-w-6xl mx-auto px-6 py-20">
+    <div class="text-center mb-14">
+      <h2 class="text-3xl font-bold text-txt leading-[1.4] mb-3">핵심 기능</h2>
+      <p class="text-txt-sub text-base leading-[1.6]">ReviewPilot로 리뷰 관리의 모든 것을 해결하세요</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- 카드 1 -->
+      <div class="bg-white rounded-xl border border-bdr shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-primary-light flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-txt leading-[1.4] mb-2">AI 자동응답</h3>
+        <p class="text-sm text-txt-sub leading-[1.6]">GPT 기반 AI가 리뷰 내용을 분석하고 브랜드에 맞는 최적의 응답을 자동 생성합니다.</p>
+      </div>
+      <!-- 카드 2 -->
+      <div class="bg-white rounded-xl border border-bdr shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-txt leading-[1.4] mb-2">실시간 대시보드</h3>
+        <p class="text-sm text-txt-sub leading-[1.6]">리뷰 통계, 별점 분포, 감성 분석을 한눈에 파악할 수 있는 시각화 대시보드를 제공합니다.</p>
+      </div>
+      <!-- 카드 3 -->
+      <div class="bg-white rounded-xl border border-bdr shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-txt leading-[1.4] mb-2">통합 리뷰 관리</h3>
+        <p class="text-sm text-txt-sub leading-[1.6]">네이버, 쿠팡, 카카오 등 여러 플랫폼의 리뷰를 한곳에서 통합 관리합니다.</p>
+      </div>
+      <!-- 카드 4 -->
+      <div class="bg-white rounded-xl border border-bdr shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+        </div>
+        <h3 class="text-lg font-semibold text-txt leading-[1.4] mb-2">톤 커스터마이징</h3>
+        <p class="text-sm text-txt-sub leading-[1.6]">친절, 격식, 캐주얼, 전문 등 브랜드 톤에 맞게 응답 스타일을 자유롭게 조절합니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 사용 흐름 3단계 -->
+  <section class="bg-white border-y border-bdr">
+    <div class="max-w-6xl mx-auto px-6 py-20">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl font-bold text-txt leading-[1.4] mb-3">간단한 3단계</h2>
+        <p class="text-txt-sub text-base leading-[1.6]">복잡한 설정 없이 바로 시작하세요</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <!-- Step 1 -->
+        <div class="text-center">
+          <div class="w-16 h-16 rounded-2xl bg-primary-light flex items-center justify-center mx-auto mb-5">
+            <span class="text-2xl font-bold text-primary font-grotesk">1</span>
+          </div>
+          <h3 class="text-lg font-semibold text-txt mb-2">스토어 연동</h3>
+          <p class="text-sm text-txt-sub leading-[1.6]">쇼핑몰 플랫폼을 연동하면 리뷰가 자동으로 수집됩니다.</p>
+        </div>
+        <!-- Step 2 -->
+        <div class="text-center relative">
+          <div class="hidden md:block absolute top-8 -left-16 w-12 text-bdr">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </div>
+          <div class="w-16 h-16 rounded-2xl bg-primary-light flex items-center justify-center mx-auto mb-5">
+            <span class="text-2xl font-bold text-primary font-grotesk">2</span>
+          </div>
+          <h3 class="text-lg font-semibold text-txt mb-2">AI 응답 생성</h3>
+          <p class="text-sm text-txt-sub leading-[1.6]">AI가 리뷰를 분석하고 브랜드 톤에 맞는 응답을 자동 생성합니다.</p>
+        </div>
+        <!-- Step 3 -->
+        <div class="text-center relative">
+          <div class="hidden md:block absolute top-8 -left-16 w-12 text-bdr">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </div>
+          <div class="w-16 h-16 rounded-2xl bg-primary-light flex items-center justify-center mx-auto mb-5">
+            <span class="text-2xl font-bold text-primary font-grotesk">3</span>
+          </div>
+          <h3 class="text-lg font-semibold text-txt mb-2">복사해서 게시</h3>
+          <p class="text-sm text-txt-sub leading-[1.6]">생성된 응답을 확인하고 원클릭으로 복사하여 바로 게시하세요.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 간단한 Footer -->
+  <footer class="bg-sidebar text-white/60">
+    <div class="max-w-6xl mx-auto px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 bg-primary rounded-md flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+        </div>
+        <span class="text-white font-semibold text-sm">ReviewPilot</span>
+      </div>
+      <p class="text-sm">&copy; 2026 ReviewPilot. All rights reserved.</p>
+    </div>
+  </footer>
+
+
+  <!-- ============================================================ -->
+  <!-- 섹션 2: 대시보드 레이아웃 -->
+  <!-- ============================================================ -->
+  <div class="section-divider" data-label="섹션 2 — 대시보드"></div>
+
+  <div class="flex min-h-[900px] bg-bg">
+    <!-- 사이드바 -->
+    <aside class="w-60 bg-sidebar flex-shrink-0 flex flex-col">
+      <!-- 로고 -->
+      <div class="h-16 px-6 flex items-center border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+          </div>
+          <span class="text-white font-bold text-lg">ReviewPilot</span>
+        </div>
+      </div>
+      <!-- 네비게이션 -->
+      <nav class="flex-1 py-4">
+        <!-- 대시보드 (활성) -->
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-white bg-sidebar-hover border-r-2 border-primary">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          <span>대시보드</span>
+        </a>
+        <!-- 리뷰 관리 -->
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+          <span>리뷰 관리</span>
+        </a>
+        <!-- 응답 템플릿 -->
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z"/></svg>
+          <span>응답 템플릿</span>
+        </a>
+        <!-- 스토어 -->
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+          <span>스토어</span>
+        </a>
+        <!-- 설정 -->
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span>설정</span>
+        </a>
+      </nav>
+      <!-- 하단 프로필 -->
+      <div class="px-6 py-4 border-t border-white/10 flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-medium">K</div>
+        <div>
+          <p class="text-sm text-white font-medium">김대표</p>
+          <p class="text-xs text-slate-400">Pro 플랜</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 메인 영역 -->
+    <div class="flex-1 flex flex-col">
+      <!-- 헤더 -->
+      <header class="h-16 bg-white border-b border-bdr px-6 flex items-center justify-between flex-shrink-0">
+        <h1 class="text-xl font-bold text-txt">대시보드</h1>
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <input type="text" class="w-64 h-9 pl-9 pr-4 text-sm bg-bg border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="리뷰 검색...">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-sub" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <button class="relative p-2 text-txt-sub hover:text-txt transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-danger rounded-full"></span>
+          </button>
+          <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">K</div>
+        </div>
+      </header>
+
+      <!-- 메인 콘텐츠 -->
+      <main class="flex-1 p-6 overflow-y-auto">
+        <!-- StatCards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <!-- 총 리뷰 -->
+          <div class="bg-white rounded-xl border border-bdr shadow-sm p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-txt-sub">총 리뷰</p>
+              <p class="text-[28px] font-bold text-txt font-grotesk leading-[1.2]">1,247</p>
+            </div>
+          </div>
+          <!-- 미응답 -->
+          <div class="bg-white rounded-xl border border-bdr shadow-sm p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-danger" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-txt-sub">미응답</p>
+              <p class="text-[28px] font-bold text-txt font-grotesk leading-[1.2]">38</p>
+            </div>
+          </div>
+          <!-- 평균 별점 -->
+          <div class="bg-white rounded-xl border border-bdr shadow-sm p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-txt-sub">평균 별점</p>
+              <p class="text-[28px] font-bold text-txt font-grotesk leading-[1.2]">4.2</p>
+            </div>
+          </div>
+          <!-- AI 응답 -->
+          <div class="bg-white rounded-xl border border-bdr shadow-sm p-5 flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-xs font-medium text-txt-sub">AI 응답</p>
+              <p class="text-[28px] font-bold text-txt font-grotesk leading-[1.2]">1,209</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 차트 행 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <!-- 별점 분포 바차트 -->
+          <div class="bg-white rounded-xl border border-bdr shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-txt leading-[1.4] mb-5">별점 분포</h3>
+            <div class="space-y-3">
+              <!-- 5점 -->
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-txt w-8 font-grotesk">5★</span>
+                <div class="flex-1 bg-slate-100 rounded-full h-6 overflow-hidden">
+                  <div class="h-full bg-primary rounded-full flex items-center justify-end pr-2" style="width: 52%">
+                    <span class="text-xs text-white font-medium font-grotesk">52%</span>
+                  </div>
+                </div>
+                <span class="text-xs text-txt-sub w-10 text-right font-grotesk">649</span>
+              </div>
+              <!-- 4점 -->
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-txt w-8 font-grotesk">4★</span>
+                <div class="flex-1 bg-slate-100 rounded-full h-6 overflow-hidden">
+                  <div class="h-full bg-blue-400 rounded-full flex items-center justify-end pr-2" style="width: 28%">
+                    <span class="text-xs text-white font-medium font-grotesk">28%</span>
+                  </div>
+                </div>
+                <span class="text-xs text-txt-sub w-10 text-right font-grotesk">349</span>
+              </div>
+              <!-- 3점 -->
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-txt w-8 font-grotesk">3★</span>
+                <div class="flex-1 bg-slate-100 rounded-full h-6 overflow-hidden">
+                  <div class="h-full bg-blue-300 rounded-full flex items-center justify-end pr-2" style="width: 12%">
+                    <span class="text-xs text-white font-medium font-grotesk">12%</span>
+                  </div>
+                </div>
+                <span class="text-xs text-txt-sub w-10 text-right font-grotesk">150</span>
+              </div>
+              <!-- 2점 -->
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-txt w-8 font-grotesk">2★</span>
+                <div class="flex-1 bg-slate-100 rounded-full h-6 overflow-hidden">
+                  <div class="h-full bg-warning rounded-full flex items-center pr-2" style="width: 5%">
+                  </div>
+                </div>
+                <span class="text-xs text-txt-sub w-10 text-right font-grotesk">62</span>
+              </div>
+              <!-- 1점 -->
+              <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-txt w-8 font-grotesk">1★</span>
+                <div class="flex-1 bg-slate-100 rounded-full h-6 overflow-hidden">
+                  <div class="h-full bg-danger rounded-full flex items-center pr-2" style="width: 3%">
+                  </div>
+                </div>
+                <span class="text-xs text-txt-sub w-10 text-right font-grotesk">37</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 감성 분석 파이차트 -->
+          <div class="bg-white rounded-xl border border-bdr shadow-sm p-6">
+            <h3 class="text-lg font-semibold text-txt leading-[1.4] mb-5">감성 분석</h3>
+            <div class="flex items-center gap-8">
+              <!-- 파이차트 (CSS conic-gradient) -->
+              <div class="relative w-40 h-40 flex-shrink-0">
+                <div class="w-full h-full rounded-full" style="background: conic-gradient(#10B981 0% 62%, #2563EB 62% 82%, #F59E0B 82% 92%, #EF4444 92% 100%);"></div>
+                <div class="absolute inset-4 bg-white rounded-full flex items-center justify-center">
+                  <div class="text-center">
+                    <p class="text-2xl font-bold text-txt font-grotesk">1,247</p>
+                    <p class="text-xs text-txt-sub">전체</p>
+                  </div>
+                </div>
+              </div>
+              <!-- 범례 -->
+              <div class="space-y-3 flex-1">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-success"></div>
+                    <span class="text-sm text-txt">긍정</span>
+                  </div>
+                  <span class="text-sm font-semibold text-txt font-grotesk">62%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-primary"></div>
+                    <span class="text-sm text-txt">중립</span>
+                  </div>
+                  <span class="text-sm font-semibold text-txt font-grotesk">20%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-warning"></div>
+                    <span class="text-sm text-txt">혼합</span>
+                  </div>
+                  <span class="text-sm font-semibold text-txt font-grotesk">10%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-danger"></div>
+                    <span class="text-sm text-txt">부정</span>
+                  </div>
+                  <span class="text-sm font-semibold text-txt font-grotesk">8%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 키워드 트렌드 TOP5 -->
+        <div class="bg-white rounded-xl border border-bdr shadow-sm p-6">
+          <div class="flex items-center justify-between mb-5">
+            <h3 class="text-lg font-semibold text-txt leading-[1.4]">키워드 트렌드 TOP 5</h3>
+            <span class="text-xs text-txt-sub">최근 30일</span>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-bg transition-colors">
+              <span class="text-lg font-bold text-primary font-grotesk w-8">1</span>
+              <span class="text-sm font-medium text-txt flex-1">배송 빠름</span>
+              <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-success">긍정</span>
+              <span class="text-sm text-txt-sub font-grotesk">312건</span>
+            </div>
+            <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-bg transition-colors">
+              <span class="text-lg font-bold text-primary font-grotesk w-8">2</span>
+              <span class="text-sm font-medium text-txt flex-1">품질 만족</span>
+              <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-success">긍정</span>
+              <span class="text-sm text-txt-sub font-grotesk">287건</span>
+            </div>
+            <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-bg transition-colors">
+              <span class="text-lg font-bold text-primary font-grotesk w-8">3</span>
+              <span class="text-sm font-medium text-txt flex-1">가성비 좋음</span>
+              <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-success">긍정</span>
+              <span class="text-sm text-txt-sub font-grotesk">198건</span>
+            </div>
+            <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-bg transition-colors">
+              <span class="text-lg font-bold text-primary font-grotesk w-8">4</span>
+              <span class="text-sm font-medium text-txt flex-1">사이즈 교환</span>
+              <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-warning">혼합</span>
+              <span class="text-sm text-txt-sub font-grotesk">145건</span>
+            </div>
+            <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-bg transition-colors">
+              <span class="text-lg font-bold text-primary font-grotesk w-8">5</span>
+              <span class="text-sm font-medium text-txt flex-1">포장 불량</span>
+              <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-red-50 text-danger">부정</span>
+              <span class="text-sm text-txt-sub font-grotesk">89건</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+
+  <!-- ============================================================ -->
+  <!-- 섹션 3: 리뷰 관리 목록 -->
+  <!-- ============================================================ -->
+  <div class="section-divider" data-label="섹션 3 — 리뷰 관리 목록"></div>
+
+  <div class="flex min-h-[700px] bg-bg">
+    <!-- 사이드바 (간략) -->
+    <aside class="w-60 bg-sidebar flex-shrink-0 flex flex-col">
+      <div class="h-16 px-6 flex items-center border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+          </div>
+          <span class="text-white font-bold text-lg">ReviewPilot</span>
+        </div>
+      </div>
+      <nav class="flex-1 py-4">
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          <span>대시보드</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-white bg-sidebar-hover border-r-2 border-primary">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+          <span>리뷰 관리</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z"/></svg>
+          <span>응답 템플릿</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+          <span>스토어</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span>설정</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 메인 -->
+    <div class="flex-1 flex flex-col">
+      <header class="h-16 bg-white border-b border-bdr px-6 flex items-center justify-between flex-shrink-0">
+        <h1 class="text-xl font-bold text-txt">리뷰 관리</h1>
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <input type="text" class="w-64 h-9 pl-9 pr-4 text-sm bg-bg border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="리뷰 검색...">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-sub" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <button class="relative p-2 text-txt-sub hover:text-txt transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          </button>
+          <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">K</div>
+        </div>
+      </header>
+
+      <main class="flex-1 p-6 overflow-y-auto">
+        <!-- 필터 바 -->
+        <div class="bg-white rounded-xl border border-bdr shadow-sm p-4 mb-6">
+          <div class="flex flex-wrap items-center gap-3">
+            <select class="h-10 px-3 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <option>전체 플랫폼</option>
+              <option>네이버</option>
+              <option>쿠팡</option>
+              <option>카카오</option>
+            </select>
+            <select class="h-10 px-3 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <option>전체 별점</option>
+              <option>5점</option>
+              <option>4점</option>
+              <option>3점</option>
+              <option>2점</option>
+              <option>1점</option>
+            </select>
+            <select class="h-10 px-3 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <option>전체 상태</option>
+              <option>미응답</option>
+              <option>AI 생성</option>
+              <option>수정완료</option>
+              <option>보류</option>
+            </select>
+            <div class="relative flex-1 min-w-[200px]">
+              <input type="text" class="w-full h-10 pl-9 pr-4 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="상품명 또는 리뷰 내용 검색...">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-sub" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <button class="ml-auto px-5 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              일괄 응답 생성
+            </button>
+          </div>
+        </div>
+
+        <!-- 리뷰 테이블 -->
+        <div class="bg-white rounded-xl border border-bdr shadow-sm overflow-hidden mb-6">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-bdr text-left text-xs font-medium text-txt-sub uppercase tracking-wide">
+                <th class="py-3 px-4 w-10"><input type="checkbox" class="rounded border-bdr"></th>
+                <th class="py-3 px-4">플랫폼</th>
+                <th class="py-3 px-4">상품명</th>
+                <th class="py-3 px-4">별점</th>
+                <th class="py-3 px-4">리뷰 요약</th>
+                <th class="py-3 px-4">응답 상태</th>
+                <th class="py-3 px-4">작성일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 행 1 -->
+              <tr class="border-b border-bdr hover:bg-bg transition-colors">
+                <td class="py-3 px-4"><input type="checkbox" class="rounded border-bdr"></td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-green-100 text-green-700">네이버</span></td>
+                <td class="py-3 px-4 font-medium text-txt">프리미엄 무선 이어폰 Pro</td>
+                <td class="py-3 px-4 text-warning">★★★★★</td>
+                <td class="py-3 px-4 text-txt-sub">음질이 정말 좋고 노이즈캔슬링이 완벽해요...</td>
+                <td class="py-3 px-4"><span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-primary-light text-primary">AI 생성</span></td>
+                <td class="py-3 px-4 text-txt-sub font-grotesk">2026.03.23</td>
+              </tr>
+              <!-- 행 2 -->
+              <tr class="border-b border-bdr hover:bg-bg transition-colors bg-bg/50">
+                <td class="py-3 px-4"><input type="checkbox" class="rounded border-bdr"></td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-orange-100 text-orange-700">쿠팡</span></td>
+                <td class="py-3 px-4 font-medium text-txt">스마트 공기청정기 AX300</td>
+                <td class="py-3 px-4 text-warning">★★★★☆</td>
+                <td class="py-3 px-4 text-txt-sub">성능은 좋은데 소음이 좀 있어요...</td>
+                <td class="py-3 px-4"><span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-slate-100 text-txt-sub">미응답</span></td>
+                <td class="py-3 px-4 text-txt-sub font-grotesk">2026.03.23</td>
+              </tr>
+              <!-- 행 3 -->
+              <tr class="border-b border-bdr hover:bg-bg transition-colors">
+                <td class="py-3 px-4"><input type="checkbox" class="rounded border-bdr"></td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-yellow-100 text-yellow-700">카카오</span></td>
+                <td class="py-3 px-4 font-medium text-txt">유기농 그래놀라 세트</td>
+                <td class="py-3 px-4 text-warning">★★★★★</td>
+                <td class="py-3 px-4 text-txt-sub">건강한 맛이에요. 재구매 의사 있습니다...</td>
+                <td class="py-3 px-4"><span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-success">수정완료</span></td>
+                <td class="py-3 px-4 text-txt-sub font-grotesk">2026.03.22</td>
+              </tr>
+              <!-- 행 4 -->
+              <tr class="border-b border-bdr hover:bg-bg transition-colors bg-bg/50">
+                <td class="py-3 px-4"><input type="checkbox" class="rounded border-bdr"></td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-green-100 text-green-700">네이버</span></td>
+                <td class="py-3 px-4 font-medium text-txt">스테인리스 텀블러 500ml</td>
+                <td class="py-3 px-4 text-warning">★★☆☆☆</td>
+                <td class="py-3 px-4 text-txt-sub">뚜껑에서 물이 새요. 교환 요청합니다...</td>
+                <td class="py-3 px-4"><span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-warning">보류</span></td>
+                <td class="py-3 px-4 text-txt-sub font-grotesk">2026.03.22</td>
+              </tr>
+              <!-- 행 5 -->
+              <tr class="border-b border-bdr hover:bg-bg transition-colors">
+                <td class="py-3 px-4"><input type="checkbox" class="rounded border-bdr"></td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 text-xs font-medium rounded bg-orange-100 text-orange-700">쿠팡</span></td>
+                <td class="py-3 px-4 font-medium text-txt">초경량 접이식 우산</td>
+                <td class="py-3 px-4 text-warning">★★★☆☆</td>
+                <td class="py-3 px-4 text-txt-sub">가볍긴 한데 바람에 좀 약해요...</td>
+                <td class="py-3 px-4"><span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-slate-100 text-txt-sub">미응답</span></td>
+                <td class="py-3 px-4 text-txt-sub font-grotesk">2026.03.21</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-txt-sub">총 <span class="font-semibold text-txt font-grotesk">1,247</span>건 중 <span class="font-grotesk">1-5</span>건</p>
+          <div class="flex items-center gap-1">
+            <button class="px-3 py-1.5 text-sm text-txt-sub border border-bdr rounded-lg hover:bg-bg transition-colors">이전</button>
+            <button class="px-3 py-1.5 text-sm text-white bg-primary rounded-lg font-grotesk">1</button>
+            <button class="px-3 py-1.5 text-sm text-txt-sub border border-bdr rounded-lg hover:bg-bg transition-colors font-grotesk">2</button>
+            <button class="px-3 py-1.5 text-sm text-txt-sub border border-bdr rounded-lg hover:bg-bg transition-colors font-grotesk">3</button>
+            <span class="px-2 text-txt-sub">...</span>
+            <button class="px-3 py-1.5 text-sm text-txt-sub border border-bdr rounded-lg hover:bg-bg transition-colors font-grotesk">250</button>
+            <button class="px-3 py-1.5 text-sm text-txt-sub border border-bdr rounded-lg hover:bg-bg transition-colors">다음</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+
+  <!-- ============================================================ -->
+  <!-- 섹션 4: AI 응답 생성 패널 -->
+  <!-- ============================================================ -->
+  <div class="section-divider" data-label="섹션 4 — AI 응답 생성 패널"></div>
+
+  <div class="flex min-h-[700px] bg-bg">
+    <!-- 사이드바 (간략) -->
+    <aside class="w-60 bg-sidebar flex-shrink-0 flex flex-col">
+      <div class="h-16 px-6 flex items-center border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+          </div>
+          <span class="text-white font-bold text-lg">ReviewPilot</span>
+        </div>
+      </div>
+      <nav class="flex-1 py-4">
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          <span>대시보드</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-white bg-sidebar-hover border-r-2 border-primary">
+          <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+          <span>리뷰 관리</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z"/></svg>
+          <span>응답 템플릿</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+          <span>스토어</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-6 py-3 text-sm font-medium text-slate-400 hover:bg-sidebar-hover hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span>설정</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 메인 -->
+    <div class="flex-1 flex flex-col">
+      <header class="h-16 bg-white border-b border-bdr px-6 flex items-center justify-between flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <a href="#" class="text-txt-sub hover:text-txt transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+          </a>
+          <h1 class="text-xl font-bold text-txt">리뷰 상세</h1>
+        </div>
+        <div class="flex items-center gap-4">
+          <button class="relative p-2 text-txt-sub hover:text-txt transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          </button>
+          <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">K</div>
+        </div>
+      </header>
+
+      <main class="flex-1 p-6 overflow-y-auto">
+        <div class="flex flex-col lg:flex-row gap-6">
+          <!-- 좌측: 리뷰 원문 카드 -->
+          <div class="lg:w-1/2">
+            <div class="bg-white rounded-xl border border-bdr shadow-sm p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-txt">리뷰 원문</h3>
+                <span class="px-2 py-0.5 text-xs font-medium rounded bg-green-100 text-green-700">네이버</span>
+              </div>
+              <div class="space-y-4">
+                <!-- 메타 정보 -->
+                <div class="flex items-center gap-4 text-sm">
+                  <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-medium text-txt-sub">김</div>
+                    <span class="font-medium text-txt">김고객</span>
+                  </div>
+                  <span class="text-warning">★★★★★</span>
+                  <span class="text-txt-sub font-grotesk">2026.03.23</span>
+                </div>
+                <!-- 상품명 -->
+                <div class="px-3 py-2 bg-bg rounded-lg">
+                  <p class="text-xs text-txt-sub mb-0.5">상품</p>
+                  <p class="text-sm font-medium text-txt">프리미엄 무선 이어폰 Pro</p>
+                </div>
+                <!-- 리뷰 전문 -->
+                <div class="border-t border-bdr pt-4">
+                  <p class="text-sm text-txt leading-[1.8]">
+                    정말 만족스러운 제품입니다! 음질이 깔끔하고 노이즈캔슬링 기능이 정말 뛰어나요. 지하철에서 사용해도 주변 소음이 거의 안 들릴 정도입니다.
+                    <br><br>
+                    배터리도 오래 가고 충전 케이스도 컴팩트해서 휴대하기 좋습니다. 통화 품질도 상대방이 잘 들린다고 하네요.
+                    <br><br>
+                    가격 대비 성능이 정말 좋아서 친구들한테도 추천했습니다. 다만 이어팁 사이즈가 조금 더 다양했으면 좋겠어요. 전체적으로 대만족입니다!
+                  </p>
+                </div>
+                <!-- 감성 태그 -->
+                <div class="flex flex-wrap gap-2 pt-2">
+                  <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-success">음질 좋음</span>
+                  <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-success">노이즈캔슬링</span>
+                  <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-emerald-50 text-success">가성비</span>
+                  <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-warning">이어팁 개선</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 우측: AI 응답 패널 -->
+          <div class="lg:w-1/2">
+            <div class="bg-white rounded-xl border border-bdr shadow-sm p-6">
+              <h3 class="text-lg font-semibold text-txt mb-5">AI 응답 생성</h3>
+
+              <!-- 톤 선택 -->
+              <div class="mb-5">
+                <label class="block text-sm font-medium text-txt mb-1.5">응답 톤</label>
+                <select class="w-full h-10 px-3 text-sm bg-white border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                  <option>친절한 톤</option>
+                  <option>격식 있는 톤</option>
+                  <option>캐주얼한 톤</option>
+                  <option>전문적인 톤</option>
+                </select>
+              </div>
+
+              <!-- AI 응답 생성 버튼 -->
+              <button class="w-full px-6 py-3.5 bg-primary hover:bg-primary-dark text-white text-base font-medium rounded-lg transition-colors flex items-center justify-center gap-2 mb-5">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                AI 응답 생성
+              </button>
+
+              <!-- 생성된 응답 영역 -->
+              <div class="mb-4">
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-sm font-medium text-txt">생성된 응답</label>
+                  <span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-primary-light text-primary">AI 생성</span>
+                </div>
+                <textarea class="w-full px-4 py-3 text-sm bg-bg border border-bdr rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none leading-[1.8]" rows="8">안녕하세요, 고객님! 프리미엄 무선 이어폰 Pro를 구매해 주셔서 감사합니다. 😊
+
+음질과 노이즈캔슬링 기능에 만족하셨다니 정말 기쁩니다. 지하철처럼 소음이 많은 환경에서도 편안하게 사용하실 수 있도록 최선을 다해 개발한 제품이라 더욱 뿌듯합니다.
+
+이어팁 사이즈에 대한 소중한 의견도 감사합니다. 고객님의 피드백을 반영하여 향후 더 다양한 사이즈를 제공할 수 있도록 검토하겠습니다.
+
+앞으로도 좋은 제품으로 보답하겠습니다. 감사합니다! 🙏</textarea>
+              </div>
+
+              <!-- 하단 버튼 -->
+              <div class="flex items-center gap-3">
+                <button class="flex-1 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                  클립보드 복사
+                </button>
+                <button class="px-4 py-2.5 bg-white border border-bdr hover:bg-bg text-txt text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                  재생성
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- 하단 여백 -->
+  <div class="h-20 bg-bg"></div>
+
+</body>
+</html>
