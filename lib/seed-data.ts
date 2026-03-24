@@ -154,7 +154,7 @@ const authors = [
   '구**', '채**', '원**', '천**', '방**', '공**', '현**', '함**', '변**', '염**',
 ];
 
-// ---- 50건의 리뷰 생성 ----
+// ---- 50건의 리뷰 생성 (최근 4주 분산) ----
 function generateReviews(): Review[] {
   const reviews: Review[] = [];
   const platforms: Array<{ platform: Review['platform']; storeId: string }> = [
@@ -164,45 +164,74 @@ function generateReviews(): Review[] {
   ];
 
   // 별점 분포: 5점(18), 4점(12), 3점(8), 2점(7), 1점(5) = 50
+  // 최근 주에 부정 리뷰 비율을 높여서 트렌드 데이터가 의미있게 나오도록 배치
   const ratingDist: Rating[] = [
-    ...Array(18).fill(5),
-    ...Array(12).fill(4),
-    ...Array(8).fill(3),
-    ...Array(7).fill(2),
-    ...Array(5).fill(1),
+    // 4주 전 (12건) — 긍정 위주
+    5, 5, 5, 5, 4, 4, 4, 5, 5, 3, 4, 5,
+    // 3주 전 (12건) — 안정적
+    5, 4, 5, 4, 3, 5, 4, 3, 2, 5, 4, 5,
+    // 2주 전 (13건) — 약간 하락
+    4, 3, 5, 2, 4, 3, 1, 5, 4, 2, 3, 4, 5,
+    // 1주 전 (13건) — 부정 증가 (경고 트리거)
+    3, 2, 1, 4, 2, 1, 3, 2, 5, 1, 2, 4, 1,
   ] as Rating[];
 
-  for (let i = 0; i < 50; i++) {
-    const rating = ratingDist[i];
-    const contents = reviewContents[rating];
-    const content = contents[i % contents.length];
-    const { platform, storeId } = platforms[i % 3];
-    const product = products[i % products.length];
-    const sentiment: Review['sentiment'] =
-      rating >= 4 ? 'positive' : rating === 3 ? 'neutral' : 'negative';
+  // 최근 4주간 날짜 생성 (오늘: 2026-03-24 기준)
+  // 4주 전: 02-24 ~ 03-02, 3주 전: 03-03 ~ 03-09, 2주 전: 03-10 ~ 03-16, 1주 전: 03-17 ~ 03-23
+  const weekRanges = [
+    { start: new Date('2026-02-24'), end: new Date('2026-03-02') },  // 4주 전
+    { start: new Date('2026-03-03'), end: new Date('2026-03-09') },  // 3주 전
+    { start: new Date('2026-03-10'), end: new Date('2026-03-16') },  // 2주 전
+    { start: new Date('2026-03-17'), end: new Date('2026-03-23') },  // 지난 주
+  ];
 
-    // 30건은 응답 완료, 5건은 보류, 나머지 15건은 미응답
-    let status: Review['status'] = 'pending';
-    if (i < 30) status = 'responded';
-    else if (i < 35) status = 'hold';
+  // 각 주별 리뷰 수: [12, 12, 13, 13]
+  const weekCounts = [12, 12, 13, 13];
+  let reviewIdx = 0;
 
-    const day = String((i % 28) + 1).padStart(2, '0');
-    const month = i < 25 ? '01' : '02';
+  for (let weekNum = 0; weekNum < 4; weekNum++) {
+    const range = weekRanges[weekNum];
+    const count = weekCounts[weekNum];
+    const daySpan = (range.end.getTime() - range.start.getTime()) / (1000 * 60 * 60 * 24);
 
-    reviews.push({
-      id: `review-${String(i + 1).padStart(3, '0')}`,
-      storeId,
-      platform,
-      author: authors[i],
-      rating,
-      content,
-      productName: product,
-      sentiment,
-      status,
-      source: i % 5 === 0 ? 'extension' : i % 3 === 0 ? 'csv' : 'manual',
-      externalId: i % 5 === 0 ? `ext-${1000 + i}` : undefined,
-      createdAt: `2026-${month}-${day}T${String(9 + (i % 12)).padStart(2, '0')}:${String(i % 60).padStart(2, '0')}:00Z`,
-    });
+    for (let j = 0; j < count; j++) {
+      const i = reviewIdx;
+      const rating = ratingDist[i];
+      const contents = reviewContents[rating];
+      const content = contents[i % contents.length];
+      const { platform, storeId } = platforms[i % 3];
+      const product = products[i % products.length];
+      const sentiment: Review['sentiment'] =
+        rating >= 4 ? 'positive' : rating === 3 ? 'neutral' : 'negative';
+
+      // 30건은 응답 완료, 5건은 보류, 나머지 15건은 미응답
+      let status: Review['status'] = 'pending';
+      if (i < 30) status = 'responded';
+      else if (i < 35) status = 'hold';
+
+      // 주 내에서 날짜 균등 분배
+      const dayOffset = Math.floor((j / count) * daySpan);
+      const reviewDate = new Date(range.start.getTime() + dayOffset * 24 * 60 * 60 * 1000);
+      const month = String(reviewDate.getMonth() + 1).padStart(2, '0');
+      const day = String(reviewDate.getDate()).padStart(2, '0');
+
+      reviews.push({
+        id: `review-${String(i + 1).padStart(3, '0')}`,
+        storeId,
+        platform,
+        author: authors[i],
+        rating,
+        content,
+        productName: product,
+        sentiment,
+        status,
+        source: i % 5 === 0 ? 'extension' : i % 3 === 0 ? 'csv' : 'manual',
+        externalId: i % 5 === 0 ? `ext-${1000 + i}` : undefined,
+        createdAt: `2026-${month}-${day}T${String(9 + (i % 12)).padStart(2, '0')}:${String(i % 60).padStart(2, '0')}:00Z`,
+      });
+
+      reviewIdx++;
+    }
   }
 
   return reviews;

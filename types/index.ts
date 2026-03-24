@@ -81,6 +81,48 @@ export interface ExtensionToken {
   isActive: boolean;
 }
 
+/** 주간 별점 추이 데이터 */
+export interface WeeklyRatingTrend {
+  week: string;       // 예: '3월 1주'
+  avg: number;        // 평균 별점
+  count: number;      // 해당 주 리뷰 수
+}
+
+/** 키워드 변화 추이 데이터 */
+export interface KeywordChange {
+  keyword: string;
+  thisWeek: number;
+  lastWeek: number;
+  change: number;     // 변화율 (%)
+  isNew: boolean;     // 새로 등장한 키워드 여부
+}
+
+/** 부정 리뷰 경고 데이터 */
+export interface NegativeAlert {
+  thisWeek: number;
+  lastWeek: number;
+  change: number;     // 변화율 (%)
+  topCause: string;   // 주요 원인 키워드
+  isIncreasing: boolean;
+}
+
+/** AI 액션 제안 */
+export interface ActionSuggestion {
+  icon: string;       // 아이콘 타입: 'size' | 'gift' | 'rating' | 'package' | 'delivery' | 'quality'
+  text: string;       // 제안 텍스트
+  keywords: string[]; // 관련 키워드 뱃지
+  priority: 'high' | 'medium' | 'low';
+}
+
+/** 플랫폼별 비교 데이터 */
+export interface PlatformComparisonItem {
+  platform: Platform;
+  name: string;       // 표시 이름
+  avgRating: number | null;
+  count: number;
+  isConnected: boolean;
+}
+
 /** 대시보드 통계 */
 export interface DashboardStats {
   totalReviews: number;
@@ -94,6 +136,12 @@ export interface DashboardStats {
     neutral: number;
   };
   topKeywords: { keyword: string; count: number }[];
+  // 인텔리전스 확장 데이터
+  weeklyRatingTrend: WeeklyRatingTrend[];
+  keywordChanges: KeywordChange[];
+  negativeAlert: NegativeAlert | null;
+  actionSuggestions: ActionSuggestion[];
+  platformComparison: PlatformComparisonItem[];
 }
 
 // ============================================
