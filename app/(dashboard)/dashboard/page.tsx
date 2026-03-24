@@ -9,11 +9,15 @@ import KeywordTrend from '../../../components/dashboard/KeywordTrend';
 import PlatformComparison from '../../../components/dashboard/PlatformComparison';
 import AlertBanner from '../../../components/dashboard/AlertBanner';
 import ActionSuggestions from '../../../components/dashboard/ActionSuggestions';
+import PaywallBlur from '../../../components/common/PaywallBlur';
+import { isTrialActive } from '../../../lib/usage';
 import { DashboardStats, Sentiment } from '../../../types';
 
 // 대시보드 페이지 — 리뷰 인텔리전스 중심 레이아웃
 export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
+  // 체험 기간 활성 여부 — true면 모든 기능 오픈, false면 프로 기능 블러
+  const trialActive = isTrialActive();
 
   // API에서 대시보드 통계 가져오기
   useEffect(() => {
@@ -164,14 +168,20 @@ export default function DashboardPage() {
           <SentimentChart data={sentimentData} total={totalReviews} />
         </div>
 
-        {/* 4행: 키워드 변화 추이 + 플랫폼별 비교 (가로 반반) */}
+        {/* 4행: 키워드 변화 추이 + 플랫폼별 비교 (가로 반반) — 프로 기능 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <KeywordTrend changes={keywordChanges} />
-          <PlatformComparison data={platformComparison} />
+          <PaywallBlur isLocked={!trialActive} feature="키워드 변화 추이">
+            <KeywordTrend changes={keywordChanges} />
+          </PaywallBlur>
+          <PaywallBlur isLocked={!trialActive} feature="플랫폼별 비교">
+            <PlatformComparison data={platformComparison} />
+          </PaywallBlur>
         </div>
 
-        {/* 5행: AI 액션 제안 (풀 폭) */}
-        <ActionSuggestions suggestions={actionSuggestions} />
+        {/* 5행: AI 액션 제안 (풀 폭) — 프로 기능 */}
+        <PaywallBlur isLocked={!trialActive} feature="AI 액션 제안">
+          <ActionSuggestions suggestions={actionSuggestions} />
+        </PaywallBlur>
       </main>
     </>
   );

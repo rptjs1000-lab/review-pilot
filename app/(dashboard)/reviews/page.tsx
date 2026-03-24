@@ -6,6 +6,8 @@ import Header from '../../../components/layout/Header';
 import ReviewFilters from '../../../components/reviews/ReviewFilters';
 import ReviewTable from '../../../components/reviews/ReviewTable';
 import Pagination from '../../../components/common/Pagination';
+import UpgradeModal from '../../../components/common/UpgradeModal';
+import { getMonthlyResponseUsage } from '../../../lib/usage';
 import { Review } from '../../../types';
 
 // 리뷰 관리 페이지 — 필터 바 + 리뷰 테이블 + 페이지네이션 + 일괄 응답 생성
@@ -17,6 +19,15 @@ export default function ReviewsPage() {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // 이번 달 AI 응답 사용량
+  const usage = getMonthlyResponseUsage();
+  // MVP: 데모용 사용량 (실제는 usage.used 사용)
+  const usedCount = usage.used || 12;
+  const limitCount = usage.limit;
+  const isOverLimit = usedCount >= limitCount;
+  const usagePercent = Math.min((usedCount / limitCount) * 100, 100);
   // ReviewTable에서 사용하는 표시용 타입
   interface ReviewDisplayRow {
     id: string;
@@ -93,10 +104,15 @@ export default function ReviewsPage() {
     router.push(`/reviews/${id}`);
   };
 
-  // 일괄 응답 생성
+  // 일괄 응답 생성 — 30건 초과 시 업그레이드 모달 표시
   const handleBulkGenerate = async () => {
     if (selectedIds.length === 0) {
       alert('리뷰를 선택해주세요.');
+      return;
+    }
+    // 무료 플랜 월 제한 체크
+    if (isOverLimit) {
+      setShowUpgradeModal(true);
       return;
     }
     try {
@@ -118,6 +134,36 @@ export default function ReviewsPage() {
     <>
       <Header title="리뷰 관리" />
       <main className="flex-1 p-6 overflow-y-auto">
+        {/* AI 응답 사용량 프로그레스 바 */}
+        <div className="bg-white border border-bdr rounded-xl p-4 mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-txt">
+              이번 달 AI 응답: <span className="font-grotesk">{usedCount}/{limitCount}건</span> 사용
+            </span>
+            {isOverLimit && (
+              <button
+                onClick={() => setShowUpgradeModal(true)}
+                className="text-xs font-medium text-primary hover:underline"
+              >
+                업그레이드
+              </button>
+            )}
+          </div>
+          <div className="w-full h-2 bg-bg rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all ${
+                isOverLimit ? 'bg-danger' : usagePercent > 80 ? 'bg-warning' : 'bg-primary'
+              }`}
+              style={{ width: `${usagePercent}%` }}
+            />
+          </div>
+          {isOverLimit && (
+            <p className="text-xs text-danger mt-1.5">
+              월간 무료 사용량을 모두 소진했습니다. 프로 플랜으로 업그레이드하세요.
+            </p>
+          )}
+        </div>
+
         {/* 필터 바 */}
         <ReviewFilters
           platform={platform}
@@ -149,6 +195,9 @@ export default function ReviewsPage() {
           onPageChange={setCurrentPage}
         />
       </main>
+
+      {/* 업그레이드 모달 */}
+      <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
     </>
   );
 }

@@ -2,7 +2,15 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+
+// 플랫폼 옵션
+const platformOptions = [
+  { value: 'all', label: '전체 플랫폼' },
+  { value: 'naver', label: '네이버 스마트스토어' },
+  { value: 'coupang', label: '쿠팡 (Coming Soon)' },
+  { value: '11st', label: '11번가 (Coming Soon)' },
+];
 
 // 사이드바 네비게이션 항목
 const navItems = [
@@ -54,9 +62,22 @@ const navItems = [
   },
 ];
 
-// 다크 사이드바 컴포넌트 — 네비 아이콘+라벨, 활성 메뉴 하이라이트
+// 다크 사이드바 컴포넌트 — 플랫폼 선택기 + 네비 아이콘+라벨, 활성 메뉴 하이라이트
 export default function Sidebar() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // 현재 선택된 플랫폼
+  const currentPlatform = searchParams.get('platform') || 'all';
+
+  // 플랫폼 변경 핸들러 — URL 쿼리파라미터로 반영
+  const handlePlatformChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('platform', value);
+    router.push(`${pathname}?${params.toString()}`);
+  };
 
   // 현재 경로가 해당 메뉴에 매치되는지 확인
   const isActive = (href: string) => {
@@ -74,6 +95,26 @@ export default function Sidebar() {
           </div>
           <span className="text-white font-bold text-lg">ReviewPilot</span>
         </Link>
+      </div>
+
+      {/* 플랫폼 선택기 */}
+      <div className="px-4 pt-4 pb-2">
+        <select
+          value={currentPlatform}
+          onChange={handlePlatformChange}
+          className="w-full px-3 py-2 bg-sidebar-hover border border-white/10 text-white text-sm rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'right 10px center',
+          }}
+        >
+          {platformOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* 네비게이션 */}
