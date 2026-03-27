@@ -8,7 +8,8 @@ import { generateResponse } from '../../../../lib/ai';
 import { canGenerate, incrementUsage } from '../../../../lib/usage';
 import { jsonResponse, handleOptions } from '../../../../lib/cors';
 import { db } from '../../../../lib/db';
-import { Review, ApiResponse, ResponseTone, Rating } from '../../../../types';
+import { getTenantId } from '../../../../lib/tenant';
+import { Review, ResponseTemplate, ApiResponse, ResponseTone, Rating } from '../../../../types';
 
 export async function OPTIONS(request: NextRequest) {
   return handleOptions(request);
@@ -24,6 +25,15 @@ interface ExtensionGenerateRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401,
+        request
+      );
+    }
+
     // 사용량 체크
     const usageCheck = canGenerate();
     if (!usageCheck.allowed) {
@@ -72,9 +82,13 @@ export async function POST(request: NextRequest) {
     };
 
     // 톤에 해당하는 템플릿 조회
-    const template = tone
-      ? db.templates.getAll().find((t) => t.tone === tone)
-      : db.templates.getDefault();
+    let template: ResponseTemplate | undefined;
+    if (tone) {
+      const allTemplates = await db.templates.getAll(tenantId);
+      template = allTemplates.find((t) => t.tone === tone);
+    } else {
+      template = await db.templates.getDefault(tenantId);
+    }
 
     // AI 응답 생성
     const responseContent = await generateResponse(virtualReview, template || undefined);

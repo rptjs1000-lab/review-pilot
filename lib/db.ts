@@ -1,13 +1,13 @@
 // ============================================
-// 인메모리 데이터 저장소 + CRUD 헬퍼
+// Supabase 데이터 저장소 + CRUD 헬퍼 (멀티테넌트)
 // ============================================
-//
-// ⚠️ 인메모리 저장소: 동시 쓰기 보호 없음
-// Map 기반 저장소는 단일 Node.js 프로세스 내에서만 유효하며,
-// 서버리스 환경에서는 인스턴스 간 데이터가 공유되지 않습니다.
-// 프로덕션 환경에서는 PostgreSQL, MongoDB 등 외부 DB로 전환이 필요합니다.
-//
 
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 import {
   Store,
   Review,
@@ -15,198 +15,421 @@ import {
   ResponseTemplate,
   ExtensionToken,
 } from '../types';
-import {
-  seedStores,
-  seedReviews,
-  seedResponses,
-  seedTemplates,
-  seedTokens,
-} from './seed-data';
-
-// ---- 인메모리 Map 저장소 ----
-const stores = new Map<string, Store>();
-const reviews = new Map<string, Review>();
-const responses = new Map<string, ReviewResponse>();
-const templates = new Map<string, ResponseTemplate>();
-const tokens = new Map<string, ExtensionToken>();
-
-// ---- 시드 데이터 초기화 ----
-function initializeData() {
-  seedStores.forEach((s) => stores.set(s.id, { ...s }));
-  seedReviews.forEach((r) => reviews.set(r.id, { ...r }));
-  seedResponses.forEach((r) => responses.set(r.id, { ...r }));
-  seedTemplates.forEach((t) => templates.set(t.id, { ...t }));
-  seedTokens.forEach((t) => tokens.set(t.id, { ...t }));
-}
-
-// 서버 시작 시 초기화
-initializeData();
 
 // ============================================
-// 제네릭 CRUD 헬퍼
+// DB ↔ App 필드명 변환 (snake_case ↔ camelCase)
 // ============================================
 
-/** ID 생성 유틸 */
-function generateId(prefix: string): string {
-  return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+function toStore(row: Record<string, unknown>): Store {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    platform: row.platform as Store['platform'],
+    url: row.url as string | undefined,
+    createdAt: row.created_at as string,
+  };
 }
 
-/** 모든 항목 조회 */
-function getAll<T>(map: Map<string, T>): T[] {
-  return Array.from(map.values());
+function toReview(row: Record<string, unknown>): Review {
+  return {
+    id: row.id as string,
+    storeId: row.store_id as string,
+    platform: row.platform as Review['platform'],
+    author: row.author as string,
+    rating: row.rating as Review['rating'],
+    content: row.content as string,
+    productName: row.product_name as string,
+    sentiment: row.sentiment as Review['sentiment'],
+    status: row.status as Review['status'],
+    source: row.source as Review['source'],
+    externalId: row.external_id as string | undefined,
+    createdAt: row.created_at as string,
+  };
 }
 
-/** ID로 단건 조회 */
-function getById<T>(map: Map<string, T>, id: string): T | undefined {
-  return map.get(id);
+function toResponse(row: Record<string, unknown>): ReviewResponse {
+  return {
+    id: row.id as string,
+    reviewId: row.review_id as string,
+    content: row.content as string,
+    tone: row.tone as string,
+    templateId: row.template_id as string | undefined,
+    isEdited: row.is_edited as boolean,
+    createdAt: row.created_at as string,
+    updatedAt: row.updated_at as string,
+  };
 }
 
-/** 새 항목 생성 */
-function create<T extends { id: string }>(
-  map: Map<string, T>,
-  item: T
-): T {
-  map.set(item.id, item);
-  return item;
+function toTemplate(row: Record<string, unknown>): ResponseTemplate {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    tone: row.tone as ResponseTemplate['tone'],
+    description: row.description as string,
+    signature: row.signature as string | undefined,
+    isDefault: row.is_default as boolean,
+    createdAt: row.created_at as string,
+  };
 }
 
-/** 항목 업데이트 */
-function update<T extends { id: string }>(
-  map: Map<string, T>,
-  id: string,
-  updates: Partial<T>
-): T | undefined {
-  const existing = map.get(id);
-  if (!existing) return undefined;
-  const updated = { ...existing, ...updates, id }; // id는 변경 불가
-  map.set(id, updated);
-  return updated;
-}
-
-/** 항목 삭제 */
-function remove<T>(map: Map<string, T>, id: string): boolean {
-  return map.delete(id);
+function toToken(row: Record<string, unknown>): ExtensionToken {
+  return {
+    id: row.id as string,
+    token: row.token as string,
+    createdAt: row.created_at as string,
+    lastUsedAt: row.last_used_at as string | undefined,
+    isActive: row.is_active as boolean,
+  };
 }
 
 // ============================================
-// 엔티티별 DB 인터페이스
+// 엔티티별 DB 인터페이스 (멀티테넌트)
 // ============================================
 
 export const db = {
   // ---- 스토어 ----
   stores: {
-    getAll: () => getAll(stores),
-    getById: (id: string) => getById(stores, id),
-    create: (data: Omit<Store, 'id' | 'createdAt'>) => {
-      const store: Store = {
-        ...data,
-        id: generateId('store'),
-        createdAt: new Date().toISOString(),
-      };
-      return create(stores, store);
+    getAll: async (tenantId: string) => {
+      const { data, error } = await supabase
+        .from('stores')
+        .select('*')
+        .eq('tenant_id', tenantId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []).map(toStore);
     },
-    update: (id: string, data: Partial<Store>) => update(stores, id, data),
-    delete: (id: string) => remove(stores, id),
+    getById: async (id: string, tenantId: string) => {
+      const { data, error } = await supabase
+        .from('stores')
+        .select('*')
+        .eq('id', id)
+        .eq('tenant_id', tenantId)
+        .single();
+      if (error) return undefined;
+      return toStore(data);
+    },
+    create: async (tenantId: string, input: Omit<Store, 'id' | 'createdAt'>) => {
+      const { data, error } = await supabase
+        .from('stores')
+        .insert({ tenant_id: tenantId, name: input.name, platform: input.platform, url: input.url })
+        .select()
+        .single();
+      if (error) throw error;
+      return toStore(data);
+    },
+    update: async (id: string, tenantId: string, updates: Partial<Store>) => {
+      const row: Record<string, unknown> = {};
+      if (updates.name !== undefined) row.name = updates.name;
+      if (updates.platform !== undefined) row.platform = updates.platform;
+      if (updates.url !== undefined) row.url = updates.url;
+      const { data, error } = await supabase
+        .from('stores')
+        .update(row)
+        .eq('id', id)
+        .eq('tenant_id', tenantId)
+        .select()
+        .single();
+      if (error) return undefined;
+      return toStore(data);
+    },
+    delete: async (id: string, tenantId: string) => {
+      const { error } = await supabase
+        .from('stores')
+        .delete()
+        .eq('id', id)
+        .eq('tenant_id', tenantId);
+      return !error;
+    },
   },
 
   // ---- 리뷰 ----
   reviews: {
-    getAll: () => getAll(reviews),
-    getById: (id: string) => getById(reviews, id),
-    create: (data: Omit<Review, 'id' | 'createdAt'>) => {
-      const review: Review = {
-        ...data,
-        id: generateId('review'),
-        createdAt: new Date().toISOString(),
-      };
-      return create(reviews, review);
+    getAll: async (tenantId: string) => {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('tenant_id', tenantId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []).map(toReview);
     },
-    /** 다건 임포트 */
-    bulkCreate: (items: Omit<Review, 'id' | 'createdAt'>[]) => {
-      return items.map((data) => {
-        const review: Review = {
-          ...data,
-          id: generateId('review'),
-          createdAt: new Date().toISOString(),
-        };
-        return create(reviews, review);
-      });
+    getById: async (id: string, tenantId: string) => {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('id', id)
+        .eq('tenant_id', tenantId)
+        .single();
+      if (error) return undefined;
+      return toReview(data);
     },
-    update: (id: string, data: Partial<Review>) => update(reviews, id, data),
-    delete: (id: string) => remove(reviews, id),
-    /** 리뷰에 연결된 응답들 조회 */
-    getResponses: (reviewId: string) =>
-      getAll(responses).filter((r) => r.reviewId === reviewId),
+    create: async (tenantId: string, input: Omit<Review, 'id' | 'createdAt'>) => {
+      const { data, error } = await supabase
+        .from('reviews')
+        .insert({
+          tenant_id: tenantId,
+          store_id: input.storeId,
+          platform: input.platform,
+          author: input.author,
+          rating: input.rating,
+          content: input.content,
+          product_name: input.productName,
+          sentiment: input.sentiment,
+          status: input.status,
+          source: input.source,
+          external_id: input.externalId,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return toReview(data);
+    },
+    bulkCreate: async (tenantId: string, items: Omit<Review, 'id' | 'createdAt'>[]) => {
+      const rows = items.map((input) => ({
+        tenant_id: tenantId,
+        store_id: input.storeId,
+        platform: input.platform,
+        author: input.author,
+        rating: input.rating,
+        content: input.content,
+        product_name: input.productName,
+        sentiment: input.sentiment,
+        status: input.status,
+        source: input.source,
+        external_id: input.externalId,
+      }));
+      const { data, error } = await supabase
+        .from('reviews')
+        .insert(rows)
+        .select();
+      if (error) throw error;
+      return (data || []).map(toReview);
+    },
+    update: async (id: string, tenantId: string, updates: Partial<Review>) => {
+      const row: Record<string, unknown> = {};
+      if (updates.status !== undefined) row.status = updates.status;
+      if (updates.sentiment !== undefined) row.sentiment = updates.sentiment;
+      if (updates.content !== undefined) row.content = updates.content;
+      if (updates.rating !== undefined) row.rating = updates.rating;
+      if (updates.author !== undefined) row.author = updates.author;
+      if (updates.productName !== undefined) row.product_name = updates.productName;
+      const { data, error } = await supabase
+        .from('reviews')
+        .update(row)
+        .eq('id', id)
+        .eq('tenant_id', tenantId)
+        .select()
+        .single();
+      if (error) return undefined;
+      return toReview(data);
+    },
+    delete: async (id: string, tenantId: string) => {
+      const { error } = await supabase
+        .from('reviews')
+        .delete()
+        .eq('id', id)
+        .eq('tenant_id', tenantId);
+      return !error;
+    },
+    getResponses: async (reviewId: string, tenantId: string) => {
+      const { data, error } = await supabase
+        .from('responses')
+        .select('*')
+        .eq('review_id', reviewId)
+        .eq('tenant_id', tenantId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []).map(toResponse);
+    },
   },
 
   // ---- 응답 ----
   responses: {
-    getAll: () => getAll(responses),
-    getById: (id: string) => getById(responses, id),
-    create: (data: Omit<ReviewResponse, 'id' | 'createdAt' | 'updatedAt'>) => {
-      const now = new Date().toISOString();
-      const response: ReviewResponse = {
-        ...data,
-        id: generateId('resp'),
-        createdAt: now,
-        updatedAt: now,
-      };
-      return create(responses, response);
+    getAll: async (tenantId: string) => {
+      const { data, error } = await supabase
+        .from('responses')
+        .select('*')
+        .eq('tenant_id', tenantId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []).map(toResponse);
     },
-    update: (id: string, data: Partial<ReviewResponse>) => {
-      return update(responses, id, {
-        ...data,
-        updatedAt: new Date().toISOString(),
-      });
+    getById: async (id: string, tenantId: string) => {
+      const { data, error } = await supabase
+        .from('responses')
+        .select('*')
+        .eq('id', id)
+        .eq('tenant_id', tenantId)
+        .single();
+      if (error) return undefined;
+      return toResponse(data);
     },
-    delete: (id: string) => remove(responses, id),
+    create: async (tenantId: string, input: Omit<ReviewResponse, 'id' | 'createdAt' | 'updatedAt'>) => {
+      const { data, error } = await supabase
+        .from('responses')
+        .insert({
+          tenant_id: tenantId,
+          review_id: input.reviewId,
+          content: input.content,
+          tone: input.tone,
+          template_id: input.templateId,
+          is_edited: input.isEdited,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return toResponse(data);
+    },
+    update: async (id: string, tenantId: string, updates: Partial<ReviewResponse>) => {
+      const row: Record<string, unknown> = {};
+      if (updates.content !== undefined) row.content = updates.content;
+      if (updates.tone !== undefined) row.tone = updates.tone;
+      if (updates.isEdited !== undefined) row.is_edited = updates.isEdited;
+      row.updated_at = new Date().toISOString();
+      const { data, error } = await supabase
+        .from('responses')
+        .update(row)
+        .eq('id', id)
+        .eq('tenant_id', tenantId)
+        .select()
+        .single();
+      if (error) return undefined;
+      return toResponse(data);
+    },
+    delete: async (id: string, tenantId: string) => {
+      const { error } = await supabase
+        .from('responses')
+        .delete()
+        .eq('id', id)
+        .eq('tenant_id', tenantId);
+      return !error;
+    },
   },
 
   // ---- 템플릿 ----
   templates: {
-    getAll: () => getAll(templates),
-    getById: (id: string) => getById(templates, id),
-    create: (data: Omit<ResponseTemplate, 'id' | 'createdAt'>) => {
-      const template: ResponseTemplate = {
-        ...data,
-        id: generateId('tpl'),
-        createdAt: new Date().toISOString(),
-      };
-      return create(templates, template);
+    getAll: async (tenantId: string) => {
+      const { data, error } = await supabase
+        .from('templates')
+        .select('*')
+        .eq('tenant_id', tenantId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []).map(toTemplate);
     },
-    update: (id: string, data: Partial<ResponseTemplate>) =>
-      update(templates, id, data),
-    delete: (id: string) => remove(templates, id),
-    /** 기본 톤 템플릿 조회 */
-    getDefault: () => getAll(templates).find((t) => t.isDefault),
+    getById: async (id: string, tenantId: string) => {
+      const { data, error } = await supabase
+        .from('templates')
+        .select('*')
+        .eq('id', id)
+        .eq('tenant_id', tenantId)
+        .single();
+      if (error) return undefined;
+      return toTemplate(data);
+    },
+    create: async (tenantId: string, input: Omit<ResponseTemplate, 'id' | 'createdAt'>) => {
+      const { data, error } = await supabase
+        .from('templates')
+        .insert({
+          tenant_id: tenantId,
+          name: input.name,
+          tone: input.tone,
+          description: input.description,
+          signature: input.signature,
+          is_default: input.isDefault,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return toTemplate(data);
+    },
+    update: async (id: string, tenantId: string, updates: Partial<ResponseTemplate>) => {
+      const row: Record<string, unknown> = {};
+      if (updates.name !== undefined) row.name = updates.name;
+      if (updates.tone !== undefined) row.tone = updates.tone;
+      if (updates.description !== undefined) row.description = updates.description;
+      if (updates.signature !== undefined) row.signature = updates.signature;
+      if (updates.isDefault !== undefined) row.is_default = updates.isDefault;
+      const { data, error } = await supabase
+        .from('templates')
+        .update(row)
+        .eq('id', id)
+        .eq('tenant_id', tenantId)
+        .select()
+        .single();
+      if (error) return undefined;
+      return toTemplate(data);
+    },
+    delete: async (id: string, tenantId: string) => {
+      const { error } = await supabase
+        .from('templates')
+        .delete()
+        .eq('id', id)
+        .eq('tenant_id', tenantId);
+      return !error;
+    },
+    getDefault: async (tenantId: string) => {
+      const { data, error } = await supabase
+        .from('templates')
+        .select('*')
+        .eq('tenant_id', tenantId)
+        .eq('is_default', true)
+        .single();
+      if (error) return undefined;
+      return toTemplate(data);
+    },
   },
 
-  // ---- Extension 토큰 ----
-  tokens: {
-    getAll: () => getAll(tokens),
-    getById: (id: string) => getById(tokens, id),
-    getByToken: (token: string) =>
-      getAll(tokens).find((t) => t.token === token && t.isActive),
-    create: (data: Omit<ExtensionToken, 'id' | 'createdAt'>) => {
-      const tokenEntry: ExtensionToken = {
-        ...data,
-        id: generateId('token'),
-        createdAt: new Date().toISOString(),
-      };
-      return create(tokens, tokenEntry);
+  // ---- 테넌트 ----
+  tenants: {
+    getById: async (id: string) => {
+      const { data, error } = await supabase
+        .from('tenants')
+        .select('*')
+        .eq('id', id)
+        .single();
+      if (error) return undefined;
+      return data;
     },
-    update: (id: string, data: Partial<ExtensionToken>) =>
-      update(tokens, id, data),
-    delete: (id: string) => remove(tokens, id),
+    getBySlug: async (slug: string) => {
+      const { data, error } = await supabase
+        .from('tenants')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+      if (error) return undefined;
+      return data;
+    },
+    create: async (input: { name: string; slug: string; plan?: string }) => {
+      const { data, error } = await supabase
+        .from('tenants')
+        .insert(input)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
   },
 
-  /** 전체 데이터 초기화 (시드 데이터로 리셋) */
-  reset: () => {
-    stores.clear();
-    reviews.clear();
-    responses.clear();
-    templates.clear();
-    tokens.clear();
-    initializeData();
+  // ---- 사용자 ----
+  users: {
+    getByEmail: async (email: string) => {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', email)
+        .single();
+      if (error) return undefined;
+      return data;
+    },
+    create: async (input: { tenant_id: string; email: string; name: string; role?: string }) => {
+      const { data, error } = await supabase
+        .from('users')
+        .insert(input)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
   },
 };

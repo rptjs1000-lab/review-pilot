@@ -4,6 +4,7 @@
 
 import { NextRequest } from 'next/server';
 import { db } from '../../../../lib/db';
+import { getTenantId } from '../../../../lib/tenant';
 import { generateResponse } from '../../../../lib/ai';
 import { canGenerate, incrementUsage } from '../../../../lib/usage';
 import { jsonResponse, handleOptions } from '../../../../lib/cors';
@@ -15,6 +16,14 @@ export async function OPTIONS() {
 
 export async function POST(request: NextRequest) {
   try {
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
     const body: BulkGenerateRequest = await request.json();
     const { reviewIds, tone } = body;
 
@@ -44,9 +53,13 @@ export async function POST(request: NextRequest) {
     }
 
     // 톤에 해당하는 템플릿 조회
-    const template = tone
-      ? db.templates.getAll().find((t) => t.tone === tone)
-      : db.templates.getDefault();
+    let template;
+    if (tone) {
+      const allTemplates = await db.templates.getAll(tenantId);
+      template = allTemplates.find((t) => t.tone === tone);
+    } else {
+      template = await db.templates.getDefault(tenantId);
+    }
 
     const results: ReviewResponse[] = [];
     const errors: { reviewId: string; error: string }[] = [];
@@ -54,11 +67,9 @@ export async function POST(request: NextRequest) {
     // 순차적으로 응답 생성 (API rate limit 고려)
     for (const reviewId of reviewIds) {
       try {
-        // M-9: 매 반복마다 사용량 재체크 — 한도 초과 시 루프 중단
         const loopUsageCheck = canGenerate();
         if (!loopUsageCheck.allowed) {
           errors.push({ reviewId, error: loopUsageCheck.reason || '사용량 한도 초과' });
-          // 나머지 리뷰도 동일 사유로 스킵 — 루프 중단
           const remainingIdx = reviewIds.indexOf(reviewId);
           for (let i = remainingIdx + 1; i < reviewIds.length; i++) {
             errors.push({ reviewId: reviewIds[i], error: loopUsageCheck.reason || '사용량 한도 초과' });
@@ -66,7 +77,7 @@ export async function POST(request: NextRequest) {
           break;
         }
 
-        const review = db.reviews.getById(reviewId);
+        const review = await db.reviews.getById(reviewId, tenantId);
         if (!review) {
           errors.push({ reviewId, error: '리뷰를 찾을 수 없습니다.' });
           continue;
@@ -82,7 +93,7 @@ export async function POST(request: NextRequest) {
         const content = await generateResponse(review, template || undefined);
 
         // 응답 저장
-        const reviewResponse = db.responses.create({
+        const reviewResponse = await db.responses.create(tenantId, {
           reviewId,
           content,
           tone: template?.tone || tone || 'friendly',
@@ -91,7 +102,7 @@ export async function POST(request: NextRequest) {
         });
 
         // 리뷰 상태 업데이트
-        db.reviews.update(reviewId, { status: 'responded' });
+        await db.reviews.update(reviewId, tenantId, { status: 'responded' });
 
         // 사용량 카운터 증가
         incrementUsage();

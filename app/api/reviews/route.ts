@@ -5,6 +5,7 @@
 
 import { NextRequest } from 'next/server';
 import { db } from '../../../lib/db';
+import { getTenantId } from '../../../lib/tenant';
 import { jsonResponse, handleOptions } from '../../../lib/cors';
 import {
   Review,
@@ -21,6 +22,14 @@ export async function OPTIONS() {
 
 export async function GET(request: NextRequest) {
   try {
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
     const { searchParams } = new URL(request.url);
 
     // 쿼리 파라미터 파싱
@@ -33,7 +42,7 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '10')));
 
     // 전체 리뷰 조회 후 필터 적용
-    let reviews = db.reviews.getAll();
+    let reviews = await db.reviews.getAll(tenantId);
 
     if (platform) {
       reviews = reviews.filter((r) => r.platform === platform);
@@ -53,12 +62,6 @@ export async function GET(request: NextRequest) {
           r.productName.toLowerCase().includes(q)
       );
     }
-
-    // 최신순 정렬
-    reviews.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
 
     // 페이지네이션
     const total = reviews.length;
@@ -84,6 +87,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
     const body = await request.json();
 
     // 입력 검증: 배열이어야 함
@@ -138,7 +149,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const created = db.reviews.bulkCreate(validReviews);
+    const created = await db.reviews.bulkCreate(tenantId, validReviews);
 
     return jsonResponse<ApiResponse<{ imported: number; errors: string[] }>>(
       {

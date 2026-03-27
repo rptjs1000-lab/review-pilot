@@ -5,6 +5,7 @@
 
 import { NextRequest } from 'next/server';
 import { db } from '../../../../lib/db';
+import { getTenantId } from '../../../../lib/tenant';
 import { jsonResponse, handleOptions } from '../../../../lib/cors';
 import { ResponseTemplate, ResponseTone, ApiResponse } from '../../../../types';
 
@@ -18,9 +19,17 @@ interface RouteParams {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
     const { id } = await params;
 
-    const existing = db.templates.getById(id);
+    const existing = await db.templates.getById(id, tenantId);
     if (!existing) {
       return jsonResponse<ApiResponse<null>>(
         { success: false, error: '템플릿을 찾을 수 없습니다.' },
@@ -71,15 +80,15 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (body.isDefault !== undefined) {
       // 기본 톤 설정 시 기존 기본 톤 해제
       if (body.isDefault) {
-        const currentDefault = db.templates.getDefault();
+        const currentDefault = await db.templates.getDefault(tenantId);
         if (currentDefault && currentDefault.id !== id) {
-          db.templates.update(currentDefault.id, { isDefault: false });
+          await db.templates.update(currentDefault.id, tenantId, { isDefault: false });
         }
       }
       updates.isDefault = !!body.isDefault;
     }
 
-    const updated = db.templates.update(id, updates);
+    const updated = await db.templates.update(id, tenantId, updates);
 
     const response: ApiResponse<ResponseTemplate> = {
       success: true,
@@ -97,11 +106,19 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
     const { id } = await params;
 
-    const existing = db.templates.getById(id);
+    const existing = await db.templates.getById(id, tenantId);
     if (!existing) {
       return jsonResponse<ApiResponse<null>>(
         { success: false, error: '템플릿을 찾을 수 없습니다.' },
@@ -117,7 +134,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    db.templates.delete(id);
+    await db.templates.delete(id, tenantId);
 
     const response: ApiResponse<null> = {
       success: true,

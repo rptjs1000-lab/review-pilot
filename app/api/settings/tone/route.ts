@@ -4,6 +4,7 @@
 
 import { NextRequest } from 'next/server';
 import { db } from '../../../../lib/db';
+import { getTenantId } from '../../../../lib/tenant';
 import { jsonResponse, handleOptions } from '../../../../lib/cors';
 import { ResponseTemplate, ApiResponse } from '../../../../types';
 
@@ -11,9 +12,17 @@ export async function OPTIONS() {
   return handleOptions();
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const defaultTemplate = db.templates.getDefault();
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
+    const defaultTemplate = await db.templates.getDefault(tenantId);
 
     if (!defaultTemplate) {
       return jsonResponse<ApiResponse<null>>(

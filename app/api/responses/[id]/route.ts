@@ -4,6 +4,7 @@
 
 import { NextRequest } from 'next/server';
 import { db } from '../../../../lib/db';
+import { getTenantId } from '../../../../lib/tenant';
 import { jsonResponse, handleOptions } from '../../../../lib/cors';
 import { ReviewResponse, ApiResponse } from '../../../../types';
 
@@ -17,10 +18,18 @@ interface RouteParams {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
     const { id } = await params;
 
     // 기존 응답 확인
-    const existing = db.responses.getById(id);
+    const existing = await db.responses.getById(id, tenantId);
     if (!existing) {
       return jsonResponse<ApiResponse<null>>(
         { success: false, error: '응답을 찾을 수 없습니다.' },
@@ -40,7 +49,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // 응답 업데이트
-    const updated = db.responses.update(id, {
+    const updated = await db.responses.update(id, tenantId, {
       content: content.trim(),
       isEdited: true,
     });

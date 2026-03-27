@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { createClient } from '../../lib/supabase';
 
 // 플랫폼 옵션
 const platformOptions = [
@@ -67,6 +68,21 @@ export default function Sidebar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const supabase = createClient();
+
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) setUserEmail(user.email || '');
+    });
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  };
 
   // 현재 선택된 플랫폼
   const currentPlatform = searchParams.get('platform') || 'all';
@@ -139,15 +155,25 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* 하단 프로필 */}
-      <div className="px-6 py-4 border-t border-white/10 flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-medium">
-          K
+      {/* 하단 프로필 + 로그아웃 */}
+      <div className="px-6 py-4 border-t border-white/10">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-medium">
+            {userEmail ? userEmail[0].toUpperCase() : '?'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm text-white font-medium truncate">{userEmail || '...'}</p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm text-white font-medium">김대표</p>
-          <p className="text-xs text-slate-400">Pro 플랜</p>
-        </div>
+        <button
+          onClick={handleLogout}
+          className="w-full px-3 py-2 text-sm text-slate-400 hover:text-white hover:bg-sidebar-hover rounded-lg transition-colors text-left flex items-center gap-2"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          로그아웃
+        </button>
       </div>
     </aside>
   );

@@ -1,16 +1,13 @@
 // ============================================
-// Extension 토큰 인증 관리
+// 인증 유틸리티
 // ============================================
-
-import { db } from './db';
+// TODO: Supabase Auth 전환 시 이 파일을 교체
 
 /** UUID v4 생성 */
 export function generateToken(): string {
-  // crypto.randomUUID() 사용 (Node.js 19+, Edge runtime 지원)
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
   }
-  // 폴백: 수동 UUID v4 생성
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
@@ -18,17 +15,9 @@ export function generateToken(): string {
   });
 }
 
-/** 토큰 유효성 검증 */
-export function verifyToken(token: string): boolean {
-  const entry = db.tokens.getByToken(token);
-  if (!entry) return false;
-
-  // 마지막 사용 시간 갱신
-  db.tokens.update(entry.id, {
-    lastUsedAt: new Date().toISOString(),
-  });
-
-  return true;
+/** 토큰 유효성 검증 — Supabase Auth 전환 전 임시 비활성화 */
+export function verifyToken(_token: string): boolean {
+  return false;
 }
 
 /** Authorization 헤더에서 Bearer 토큰 추출 */

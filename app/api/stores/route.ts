@@ -5,6 +5,7 @@
 
 import { NextRequest } from 'next/server';
 import { db } from '../../../lib/db';
+import { getTenantId } from '../../../lib/tenant';
 import { jsonResponse, handleOptions } from '../../../lib/cors';
 import { Store, Platform, ApiResponse } from '../../../types';
 
@@ -12,9 +13,17 @@ export async function OPTIONS() {
   return handleOptions();
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const stores = db.stores.getAll();
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
+    const stores = await db.stores.getAll(tenantId);
 
     const response: ApiResponse<Store[]> = {
       success: true,
@@ -33,6 +42,14 @@ export async function GET(_request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
     const body = await request.json();
     const { name, platform, url } = body;
 
@@ -52,7 +69,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const store = db.stores.create({
+    const store = await db.stores.create(tenantId, {
       name: name.trim(),
       platform,
       url: url || undefined,

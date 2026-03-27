@@ -5,6 +5,7 @@
 
 import { NextRequest } from 'next/server';
 import { db } from '../../../lib/db';
+import { getTenantId } from '../../../lib/tenant';
 import { jsonResponse, handleOptions } from '../../../lib/cors';
 import { ResponseTemplate, ResponseTone, ApiResponse } from '../../../types';
 
@@ -12,9 +13,17 @@ export async function OPTIONS() {
   return handleOptions();
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const templates = db.templates.getAll();
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
+    const templates = await db.templates.getAll(tenantId);
 
     const response: ApiResponse<ResponseTemplate[]> = {
       success: true,
@@ -33,6 +42,14 @@ export async function GET(_request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
     const body = await request.json();
     const { name, tone, description, signature, isDefault } = body;
 
@@ -67,13 +84,13 @@ export async function POST(request: NextRequest) {
 
     // 기본 톤으로 설정 시 기존 기본 톤 해제
     if (isDefault) {
-      const currentDefault = db.templates.getDefault();
+      const currentDefault = await db.templates.getDefault(tenantId);
       if (currentDefault) {
-        db.templates.update(currentDefault.id, { isDefault: false });
+        await db.templates.update(currentDefault.id, tenantId, { isDefault: false });
       }
     }
 
-    const template = db.templates.create({
+    const template = await db.templates.create(tenantId, {
       name: name.trim(),
       tone,
       description: description.trim(),

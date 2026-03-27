@@ -5,6 +5,7 @@
 
 import { NextRequest } from 'next/server';
 import { db } from '../../../../lib/db';
+import { getTenantId } from '../../../../lib/tenant';
 import { jsonResponse, handleOptions } from '../../../../lib/cors';
 import { Store, Platform, ApiResponse } from '../../../../types';
 
@@ -18,9 +19,17 @@ interface RouteParams {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const tenantId = await getTenantId(request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
     const { id } = await params;
 
-    const existing = db.stores.getById(id);
+    const existing = await db.stores.getById(id, tenantId);
     if (!existing) {
       return jsonResponse<ApiResponse<null>>(
         { success: false, error: '스토어를 찾을 수 없습니다.' },
@@ -56,7 +65,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       updates.url = body.url || undefined;
     }
 
-    const updated = db.stores.update(id, updates);
+    const updated = await db.stores.update(id, tenantId, updates);
 
     const response: ApiResponse<Store> = {
       success: true,
@@ -76,9 +85,17 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
+    const tenantId = await getTenantId(_request);
+    if (!tenantId) {
+      return jsonResponse<ApiResponse<null>>(
+        { success: false, error: '테넌트 정보가 필요합니다.' },
+        401
+      );
+    }
+
     const { id } = await params;
 
-    const existing = db.stores.getById(id);
+    const existing = await db.stores.getById(id, tenantId);
     if (!existing) {
       return jsonResponse<ApiResponse<null>>(
         { success: false, error: '스토어를 찾을 수 없습니다.' },
@@ -86,7 +103,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    db.stores.delete(id);
+    await db.stores.delete(id, tenantId);
 
     const response: ApiResponse<null> = {
       success: true,
